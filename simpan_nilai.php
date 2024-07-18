@@ -1,9 +1,8 @@
 <?php
 $servername = "localhost";
-$username = "username";
-$password = "password";
-$dbname = "database_name";
-
+$username = "root";
+$password = "";
+$dbname = "kkp_db";
 // Membuat koneksi
 $conn = new mysqli($servername, $username, $password, $dbname);
 
