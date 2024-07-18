@@ -1,22 +1,11 @@
 <?php
 require './PHPExcel/Classes/PHPExcel.php';
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "kkp_db";
-
-// Membuat koneksi
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Cek koneksi
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'koneksi.php';
 
 // Mengambil data dari database
-// $sql = "SELECT * FROM Nilai";
-// $result = $conn->query($sql);
+$sql = "SELECT * FROM Nilai";
+$result = $conn->query($sql);
 
 // Membuat objek PHPExcel
 $objPHPExcel = new PHPExcel();
