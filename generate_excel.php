@@ -1,46 +1,104 @@
 <?php
-require './PHPExcel/Classes/PHPExcel.php';
-
 include 'koneksi.php';
 
 // Mengambil data dari database
-$sql = "SELECT * FROM Nilai";
+$sql = "SELECT * FROM nilai JOIN siswa ON siswa.id_siswa = nilai.id_siswa";
 $result = $conn->query($sql);
 
-// Membuat objek PHPExcel
-$objPHPExcel = new PHPExcel();
-$objPHPExcel->setActiveSheetIndex(0);
+$kds = [];
+$students = [];
 
-// Menulis header
-$objPHPExcel->getActiveSheet()->SetCellValue('A1', 'ID Siswa');
-$objPHPExcel->getActiveSheet()->SetCellValue('B1', 'KD');
-$objPHPExcel->getActiveSheet()->SetCellValue('C1', 'Type KD');
-$objPHPExcel->getActiveSheet()->SetCellValue('D1', 'Tugas 1');
-$objPHPExcel->getActiveSheet()->SetCellValue('E1', 'Tugas 2');
-$objPHPExcel->getActiveSheet()->SetCellValue('F1', 'Tugas 3');
-$objPHPExcel->getActiveSheet()->SetCellValue('G1', 'Tugas 4');
-$objPHPExcel->getActiveSheet()->SetCellValue('H1', 'Tugas 5');
-$objPHPExcel->getActiveSheet()->SetCellValue('I1', 'Tugas 6');
-$objPHPExcel->getActiveSheet()->SetCellValue('J1', 'UH 1');
-$objPHPExcel->getActiveSheet()->SetCellValue('K1', 'UH 2');
-
-// Menulis data
-$row = 2;
 if ($result->num_rows > 0) {
-    while ($data = $result->fetch_assoc()) {
-        $objPHPExcel->getActiveSheet()->SetCellValue('A' . $row, $data['id_siswa']);
-        $objPHPExcel->getActiveSheet()->SetCellValue('B' . $row, $data['kd']);
-        $objPHPExcel->getActiveSheet()->SetCellValue('C' . $row, $data['type_kd']);
-        $objPHPExcel->getActiveSheet()->SetCellValue('D' . $row, $data['tugas_1']);
-        $objPHPExcel->getActiveSheet()->SetCellValue('E' . $row, $data['tugas_2']);
-        $objPHPExcel->getActiveSheet()->SetCellValue('F' . $row, $data['tugas_3']);
-        $objPHPExcel->getActiveSheet()->SetCellValue('G' . $row, $data['tugas_4']);
-        $objPHPExcel->getActiveSheet()->SetCellValue('H' . $row, $data['tugas_5']);
-        $objPHPExcel->getActiveSheet()->SetCellValue('I' . $row, $data['tugas_6']);
-        $objPHPExcel->getActiveSheet()->SetCellValue('J' . $row, $data['uh_1']);
-        $objPHPExcel->getActiveSheet()->SetCellValue('K' . $row, $data['uh_2']);
-        $row++;
+    while ($row = $result->fetch_assoc()) {
+        $students[] = $row;
+        if (!in_array($row['kd'], $kds)) {
+            $kds[] = $row['kd'];
+        }
     }
+} else {
+    echo "Tidak ada data";
+    exit();
 }
+?>
 
-// Menyimpan file Excel
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nilai Siswa</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Daftar Nilai Siswa</h2>
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2">NO</th>
+                <th rowspan="2">NAMA SISWA</th>
+                <?php foreach ($kds as $kd) : ?>
+                    <th colspan="8"><?= $kd ?> PENGETAHUAN</th>
+                    <th colspan="2"><?= $kd ?> KETERAMPILAN</th>
+                <?php endforeach; ?>
+            </tr>
+            <tr>
+                <?php foreach ($kds as $kd) : ?>
+                    <?php for ($i = 1; $i <= 6; $i++) : ?>
+                        <th>TUG AS <?= $i ?></th>
+                    <?php endfor; ?>
+                    <?php for ($i = 1; $i <= 2; $i++) : ?>
+                        <th>UH<?= $i ?></th>
+                    <?php endfor; ?>
+                    <?php for ($i = 1; $i <= 2; $i++) : ?>
+                        <th>TUG AS <?= $i ?></th>
+                    <?php endfor; ?>
+                <?php endforeach; ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $no = 1;
+            foreach ($students as $student) :
+            ?>
+                <tr>
+                    <td><?= $no++ ?></td>
+                    <td><?= $student['nama_siswa'] ?></td>
+                    <?php foreach ($kds as $kd) : ?>
+                        <?php for ($i = 1; $i <= 6; $i++) : ?>
+                            <td class='highlight'><?= $student['kd' . $kd . '_tugas_' . $i] ?? '##' ?></td>
+                        <?php endfor; ?>
+                        <?php for ($i = 1; $i <= 2; $i++) : ?>
+                            <td class='highlight'><?= $student['kd' . $kd . '_uh_' . $i] ?? '##' ?></td>
+                        <?php endfor; ?>
+                        <?php for ($i = 1; $i <= 2; $i++) : ?>
+                            <td class='highlight'><?= $student['kd' . $kd . '_tugas_as_' . $i] ?? '##' ?></td>
+                        <?php endfor; ?>
+                    <?php endforeach; ?>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</body>
+
+</html>
