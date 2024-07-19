@@ -71,7 +71,7 @@ if ($result->num_rows > 0) {
                         <th>UH<?= $i ?></th>
                     <?php endfor; ?>
                     <?php for ($i = 1; $i <= 2; $i++) : ?>
-                        <th>TUG AS <?= $i ?></th>
+                        <th>TUGAS <?= $i ?></th>
                     <?php endfor; ?>
                 <?php endforeach; ?>
             </tr>
@@ -86,7 +86,7 @@ if ($result->num_rows > 0) {
                     <td><?= $student['nama_siswa'] ?></td>
                     <?php foreach ($kds as $kd) : ?>
                         <?php for ($i = 1; $i <= 6; $i++) : ?>
-                            <td class='highlight'><?= $student['kd' . $kd . '_tugas_' . $i] ?? '##' ?></td>
+                            <td class='highlight'><?= $student['tugas_1'] ?? '##' ?></td>
                         <?php endfor; ?>
                         <?php for ($i = 1; $i <= 2; $i++) : ?>
                             <td class='highlight'><?= $student['kd' . $kd . '_uh_' . $i] ?? '##' ?></td>
