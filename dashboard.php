@@ -37,9 +37,63 @@ if ($result->num_rows > 0) {
 <head>
     <meta charset="UTF-8">
     <title>Data Kelas, Jurusan, dan Mapel</title>
-    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link rel="stylesheet" href="assets/styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" />
+
     <style>
+        /* CSS untuk kartu informasi */
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .card {
+            flex: 1 1 calc(20% - 10px);
+            background-color: #f8f9fa;
+            padding: 20px;
+            margin: 5px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .card h3 {
+            margin: 10px 0;
+            font-size: 1.5em;
+        }
+
+        .card p {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .card i {
+            font-size: 2em;
+            color: #007bff;
+        }
+
+        /* Responsif */
+        @media (max-width: 768px) {
+            .card {
+                flex: 1 1 calc(50% - 10px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                flex: 1 1 100%;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
         .tab {
             overflow: hidden;
             border: 1px solid #ccc;
@@ -99,14 +153,42 @@ if ($result->num_rows > 0) {
         <label class="logo">DesignX</label>
         <ul>
             <li><a class="active" href="#">Home</a></li>
-            <li><a href="#">Dashboard</a></li>
             <li><a href="guru.php">Guru</a></li>
             <li><a href="siswa.php">Siswa</a></li>
             <li><a href="nilai.php">Nilai</a></li>
         </ul>
     </nav>
-    <div>
-        <h1>Data Kelas, Jurusan, dan Mapel</h1>
+
+    <div class="container">
+        <div class="cards-container">
+            <div class="card">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h3>15</h3>
+                <p>Guru</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-chalkboard"></i>
+                <h3>10</h3>
+                <p>Jurusan</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-school"></i>
+                <h3>20</h3>
+                <p>Kelas</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-book"></i>
+                <h3>30</h3>
+                <p>Mapel</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-user-graduate"></i>
+                <h3>400</h3>
+                <p>Siswa</p>
+            </div>
+        </div>
+
+        <h1 class="header-table">Data Kelas, Jurusan, dan Mapel</h1>
         <div class="tab">
             <button class="tablinks" onclick="openTab(event, 'KelasX')">Kelas X</button>
             <button class="tablinks" onclick="openTab(event, 'KelasXI')">Kelas XI</button>

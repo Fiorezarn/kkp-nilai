@@ -1,23 +1,38 @@
 <?php
 include 'koneksi.php';
 
-// Mengambil data dari database
-$sql = "SELECT * FROM nilai JOIN siswa ON siswa.id_siswa = nilai.id_siswa";
+if (isset($_POST['add_nilai'])) {
+    $id_siswa = $_POST['id_siswa'];
+    $mata_pelajaran = $_POST['mata_pelajaran'];
+    $nilai = $_POST['nilai'];
+
+    $sql = "INSERT INTO `nilai` (`id_nilai`, `id_siswa`, `mata_pelajaran`, `nilai`) VALUES (NULL, '$id_siswa', '$mata_pelajaran', '$nilai');";
+
+    if ($conn->query($sql) === TRUE) {
+        $message = "Data berhasil disimpan";
+    } else {
+        $message = "Error: " . $sql . "<br>" . $conn->error;
+    }
+}
+
+$sql = "SELECT nilai.*, siswa.nama_siswa FROM nilai JOIN siswa ON siswa.id_siswa = nilai.id_siswa";
 $result = $conn->query($sql);
-
-$kds = [];
-$students = [];
-
+$nilaiData = [];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $students[] = $row;
-        if (!in_array($row['kd'], $kds)) {
-            $kds[] = $row['kd'];
-        }
+        $nilaiData[] = $row;
     }
 } else {
-    echo "Tidak ada data";
-    exit();
+    $message = "Tidak ada data";
+}
+
+$sql_siswa = "SELECT * FROM siswa";
+$result_siswa = $conn->query($sql_siswa);
+$siswaData = [];
+if ($result_siswa->num_rows > 0) {
+    while ($row = $result_siswa->fetch_assoc()) {
+        $siswaData[] = $row;
+    }
 }
 ?>
 
@@ -26,79 +41,196 @@ if ($result->num_rows > 0) {
 
 <head>
     <meta charset="UTF-8">
-    <title>Nilai Siswa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Nilai</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" />
+
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .header-table {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 2em;
+        }
+
         table {
             width: 100%;
+            margin-top: 20px;
             border-collapse: collapse;
         }
 
-        th,
-        td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: center;
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #007bff;
+            color: white;
         }
 
-        .highlight {
-            background-color: yellow;
+        .actions i {
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        .actions i.edit {
+            color: #ffc107;
+        }
+
+        .actions i.delete {
+            color: #dc3545;
+        }
+
+        .actions i.add {
+            color: #28a745;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
-    <h2>Daftar Nilai Siswa</h2>
-    <table>
-        <thead>
-            <tr>
-                <th rowspan="2">NO</th>
-                <th rowspan="2">NAMA SISWA</th>
-                <?php foreach ($kds as $kd) : ?>
-                    <th colspan="8"><?= $kd ?> PENGETAHUAN</th>
-                    <th colspan="2"><?= $kd ?> KETERAMPILAN</th>
-                <?php endforeach; ?>
-            </tr>
-            <tr>
-                <?php foreach ($kds as $kd) : ?>
-                    <?php for ($i = 1; $i <= 6; $i++) : ?>
-                        <th>TUG AS <?= $i ?></th>
-                    <?php endfor; ?>
-                    <?php for ($i = 1; $i <= 2; $i++) : ?>
-                        <th>UH<?= $i ?></th>
-                    <?php endfor; ?>
-                    <?php for ($i = 1; $i <= 2; $i++) : ?>
-                        <th>TUGAS <?= $i ?></th>
-                    <?php endfor; ?>
-                <?php endforeach; ?>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            $no = 1;
-            foreach ($students as $student) :
-            ?>
+    <nav>
+        <label class="logo">DesignX</label>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="guru.php">Guru</a></li>
+            <li><a href="siswa.php">Siswa</a></li>
+            <li><a class="active" href="nilai.php">Nilai</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2 class="header-table">Data Nilai</h2>
+        <button id="openModalBtn">Add Nilai</button>
+        <div id="addNilaiModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <form action="nilai.php" method="post">
+                    <label for="id_siswa">Nama Siswa:</label>
+                    <select id="id_siswa" name="id_siswa" required>
+                        <?php foreach ($siswaData as $siswa) : ?>
+                            <option value="<?= $siswa['id_siswa'] ?>"><?= $siswa['nama_siswa'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <label for="mata_pelajaran">Mata Pelajaran:</label>
+                    <input type="text" id="mata_pelajaran" name="mata_pelajaran" required>
+                    <label for="nilai">Nilai:</label>
+                    <input type="text" id="nilai" name="nilai" required>
+                    <button type="submit" name="add_nilai">Add</button>
+                </form>
+            </div>
+        </div>
+
+        <table id="tableNilai" class="display">
+            <thead>
                 <tr>
-                    <td><?= $no++ ?></td>
-                    <td><?= $student['nama_siswa'] ?></td>
-                    <?php foreach ($kds as $kd) : ?>
-                        <?php for ($i = 1; $i <= 6; $i++) : ?>
-                            <td class='highlight'><?= $student['tugas_1'] ?? '##' ?></td>
-                        <?php endfor; ?>
-                        <?php for ($i = 1; $i <= 2; $i++) : ?>
-                            <td class='highlight'><?= $student['kd' . $kd . '_uh_' . $i] ?? '##' ?></td>
-                        <?php endfor; ?>
-                        <?php for ($i = 1; $i <= 2; $i++) : ?>
-                            <td class='highlight'><?= $student['kd' . $kd . '_tugas_as_' . $i] ?? '##' ?></td>
-                        <?php endfor; ?>
-                    <?php endforeach; ?>
+                    <th>Nama Siswa</th>
+                    <th>Mata Pelajaran</th>
+                    <th>Nilai</th>
+                    <th>Actions</th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php if (!empty($nilaiData)) : foreach ($nilaiData as $row) : ?>
+                    <tr>
+                        <td><?= $row['nama_siswa'] ?></td>
+                        <td><?= $row['mata_pelajaran'] ?></td>
+                        <td><?= $row['nilai'] ?></td>
+                        <td class="actions">
+                            <i class="fas fa-edit edit"></i>
+                            <i class="fas fa-trash delete"></i>
+                        </td>
+                    </tr>
+                <?php endforeach; else : ?>
+                    <tr>
+                        <td colspan="4">No data available</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- jQuery Library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#tableNilai').DataTable();
+
+            const modal = document.getElementById('addNilaiModal');
+            const btn = document.getElementById('openModalBtn');
+            const span = document.getElementsByClassName('close')[0];
+
+            btn.onclick = function() {
+                modal.style.display = 'block';
+            }
+
+            span.onclick = function() {
+                modal.style.display = 'none';
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>
