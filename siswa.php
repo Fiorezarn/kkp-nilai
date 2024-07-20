@@ -1,33 +1,9 @@
 <?php
-include 'koneksi.php';
-
-if (isset($_POST['add_siswa'])) {
-    $nama_siswa = $_POST['nama_siswa'];
-    $kelas = $_POST['kelas'];
-
-    $sql = "INSERT INTO `siswa` (`id_siswa`, `nama_siswa`, `kelas`) VALUES (NULL, '$nama_siswa', '$kelas');";
-
-    if ($conn->query($sql) === TRUE) {
-        $message = "Data berhasil disimpan";
-    } else {
-        $message = "Error: " . $sql . "<br>" . $conn->error;
-    }
-}
-
-$sql = "SELECT s.nama_siswa, k.nama_kelas, j.nama_jurusan FROM siswa s
-        JOIN kelas k ON k.id_kelas = s.id_kelas
-        JOIN jurusan j ON j.id_jurusan = s.id_jurusan";
-$result = $conn->query($sql);
-$siswaData = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $siswaData[] = $row;
-    }
-} else {
-    $message = "Tidak ada data";
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_siswa'])) {
+    header("Location: siswa.php");
+    exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -159,7 +135,10 @@ if ($result->num_rows > 0) {
             margin-left: 10px !important;
             color: #ffffff !important;
             background-color: #28a745 !important;
-            padding: 5px 10px 0px 10px !important;
+            padding: 5px 10px 5px 10px !important;
+            border: #ddd;
+            border-radius: 2px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -178,18 +157,7 @@ if ($result->num_rows > 0) {
 
     <div class="container">
         <h2 class="header-table">Data Siswa</h2>
-        <div id="addSiswaModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <form action="siswa.php" method="post">
-                    <label for="nama_siswa">Nama Siswa:</label>
-                    <input type="text" id="nama_siswa" name="nama_siswa" required>
-                    <label for="kelas">Kelas:</label>
-                    <input type="text" id="kelas" name="kelas" required>
-                    <button type="submit" name="add_siswa">Add</button>
-                </form>
-            </div>
-        </div>
+
 
         <a id="openModalBtn" class="button1">Tambahkan Murid</a>
         <div class="frameTable">
@@ -203,24 +171,60 @@ if ($result->num_rows > 0) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (!empty($siswaData)) : foreach ($siswaData as $row) : ?>
-                            <tr>
-                                <td><?= $row['nama_siswa'] ?></td>
-                                <td><?= $row['nama_kelas'] ?></td>
-                                <td><?= $row['nama_jurusan'] ?></td>
-                                <td class="actions">
-                                    <i class="fas fa-edit edit"></i>
-                                    <i class="fas fa-trash delete"></i>
-                                </td>
-                            </tr>
-                        <?php endforeach;
-                    else : ?>
-                        <tr>
-                            <td colspan="3">No data available</td>
-                        </tr>
-                    <?php endif; ?>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content">
+            <span class="close close-delete">&times;</span>
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete <span id="delete-item-name"></span>? This action cannot be undone.</p>
+            <button id="confirmDeleteBtn" class="button1">Delete</button>
+            <button id="cancelDeleteBtn" class="button1" style="background-color: #6c757d;">Cancel</button>
+        </div>
+    </div>
+
+    <div id="addSiswaModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form action="siswa.php" method="post">
+                <label for="nama_siswa">Nama Siswa:</label>
+                <input type="text" id="nama_siswa" name="nama_siswa" required>
+                <label for="kelas">Kelas:</label>
+                <select id="kelas" name="kelas" required>
+                    <option value="1">Kelas 10</option>
+                    <option value="2">Kelas 11</option>
+                    <option value="3">Kelas 12</option>
+                </select>
+                <label for="jurusan">Jurusan:</label>
+                <select id="jurusan" name="jurusan" required>
+                </select>
+                <button type="submit" name="add_siswa" id="addSiswa">Add</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Siswa Modal -->
+    <div id="editSiswaModal" class="modal">
+        <div class="modal-content">
+            <span class="close close-edit">&times;</span>
+            <form id="editSiswaForm" method="post">
+                <input type="hidden" id="edit_id_siswa" name="id_siswa">
+                <label for="edit_nama_siswa">Nama Siswa:</label>
+                <input type="text" id="edit_nama_siswa" name="nama_siswa" required>
+                <label for="edit_kelas">Kelas:</label>
+                <select id="edit_kelas" name="kelas" required>
+                    <option value="1">Kelas 10</option>
+                    <option value="2">Kelas 11</option>
+                    <option value="3">Kelas 12</option>
+                </select>
+                <label for="edit_jurusan">Jurusan:</label>
+                <select id="edit_jurusan" name="jurusan" required>
+                </select>
+                <button type="submit" name="edit_siswa" id="editSiswa">Update</button>
+            </form>
         </div>
     </div>
 
@@ -234,7 +238,37 @@ if ($result->num_rows > 0) {
     <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#tableSiswa').DataTable({
+            var table = $('#tableSiswa').DataTable({
+                ajax: {
+                    url: 'siswa-script.php',
+                    data: {
+                        action: 'showCustomer'
+                    },
+                    dataSrc: ''
+                },
+                columns: [{
+                        data: 'nama_siswa'
+                    },
+                    {
+                        data: 'nama_kelas'
+                    },
+                    {
+                        data: 'nama_jurusan'
+                    },
+                    {
+                        data: null,
+                        className: 'actions',
+                        defaultContent: `
+            <button class="edit-btn">
+                <i class="fas fa-edit edit"></i>
+            </button>
+            <button class="delete-btn" data-id="">
+                <i class="fas fa-trash delete"></i>
+            </button>
+        `,
+                        orderable: false
+                    }
+                ],
                 dom: 'lBftip',
                 buttons: [{
                     text: '<i class="fas fa-file-excel"></i>',
@@ -247,22 +281,172 @@ if ($result->num_rows > 0) {
                 }
             });
 
-            const modal = document.getElementById('addSiswaModal');
-            const btn = document.getElementById('openModalBtn');
-            const span = document.getElementsByClassName('close')[0];
+            const addModal = document.getElementById('addSiswaModal');
+            const editModal = document.getElementById('editSiswaModal');
+            const deleteModal = document.getElementById('deleteConfirmModal');
+            const addBtn = document.getElementById('openModalBtn');
+            const addCloseBtn = document.querySelector('#addSiswaModal .close');
+            const editCloseBtn = document.querySelector('#editSiswaModal .close-edit');
+            const deleteCloseBtn = document.querySelector('#deleteConfirmModal .close-delete');
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
 
-            btn.onclick = function() {
-                modal.style.display = 'block';
+            addBtn.onclick = function() {
+                addModal.style.display = 'block';
+                populateJurusanOptions();
             }
 
-            span.onclick = function() {
-                modal.style.display = 'none';
+            addCloseBtn.onclick = function() {
+                addModal.style.display = 'none';
+            }
+
+            editCloseBtn.onclick = function() {
+                editModal.style.display = 'none';
+            }
+
+            deleteCloseBtn.onclick = function() {
+                deleteModal.style.display = 'none';
             }
 
             window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
+                if (event.target == addModal) {
+                    addModal.style.display = 'none';
                 }
+                if (event.target == editModal) {
+                    editModal.style.display = 'none';
+                }
+                if (event.target == deleteModal) {
+                    deleteModal.style.display = 'none';
+                }
+            }
+
+            $('#tableSiswa tbody').on('click', '.edit-btn', function() {
+                var data = table.row($(this).parents('tr')).data();
+                var id = data.id_siswa;
+                $('#edit_id_siswa').val(id);
+                $('#edit_nama_siswa').val(data.nama_siswa);
+                $('#edit_kelas').val(data.id_kelas);
+                $('#edit_jurusan').val(data.id_jurusan);
+                editModal.style.display = 'block';
+                populateEditJurusanOptions();
+            });
+
+            $('#tableSiswa tbody').on('click', '.delete-btn', function() {
+                var data = table.row($(this).parents('tr')).data();
+                var id = data.id_siswa;
+                var name = data.nama_siswa;
+                $('#delete-item-name').text(name);
+                deleteModal.style.display = 'block';
+
+                confirmDeleteBtn.onclick = function() {
+                    confirmDelete(id);
+                    deleteModal.style.display = 'none';
+                }
+
+                cancelDeleteBtn.onclick = function() {
+                    deleteModal.style.display = 'none';
+                }
+            });
+
+            function populateJurusanOptions() {
+                $.ajax({
+                    url: 'siswa-script.php?action=listJurusan',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (Array.isArray(response)) {
+                            var jurusanSelect = $('#jurusan');
+                            var editJurusanSelect = $('#edit_jurusan');
+                            jurusanSelect.empty();
+                            editJurusanSelect.empty();
+                            $.each(response, function(index, item) {
+                                jurusanSelect.append(new Option(item.nama_jurusan, item.id_jurusan));
+                                editJurusanSelect.append(new Option(item.nama_jurusan, item.id_jurusan));
+                            });
+                        } else {
+                            console.error("Expected an array but got:", response);
+                        }
+                    },
+                    error: function(error) {
+                        console.error("Error fetching jurusan data:", error);
+                    }
+                });
+            }
+
+            function populateEditJurusanOptions() {
+                $.ajax({
+                    url: 'siswa-script.php?action=listJurusan',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (Array.isArray(response)) {
+                            var editJurusanSelect = $('#edit_jurusan');
+                            editJurusanSelect.empty();
+                            $.each(response, function(index, item) {
+                                editJurusanSelect.append(new Option(item.nama_jurusan, item.id_jurusan));
+                            });
+                        } else {
+                            console.error("Expected an array but got:", response);
+                        }
+                    },
+                    error: function(error) {
+                        console.error("Error fetching jurusan data:", error);
+                    }
+                });
+            }
+
+            $("#addSiswa").on("click", function() {
+                event.preventDefault();
+                var formData = new FormData();
+                formData.append('nama_siswa', $("#nama_siswa").val());
+                formData.append('id_kelas', $("#kelas").val());
+                formData.append('id_jurusan', $("#jurusan").val());
+                $.ajax({
+                    url: 'siswa-script.php?action=insertSiswa',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $("#tableSiswa").DataTable().ajax.reload();
+                        addModal.style.display = 'none';
+                    },
+                    error: function(error) {
+                        console.error("Error adding Siswa:", error);
+                    }
+                });
+            });
+
+            $("#editSiswaForm").on("submit", function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: 'siswa-script.php?action=updateSiswa',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $("#tableSiswa").DataTable().ajax.reload();
+                        editModal.style.display = 'none';
+                    },
+                    error: function(error) {
+                        console.error("Error updating Siswa:", error);
+                    }
+                });
+            });
+
+            function confirmDelete(id) {
+                $.ajax({
+                    url: `siswa-script.php?action=deleteSiswa&id_siswa=${id}`,
+                    method: "POST",
+                    success: function(response) {
+                        $("#tableSiswa").DataTable().ajax.reload();
+                    },
+                    error: function(error) {
+                        console.error("Error deleting Siswa:", error);
+                    }
+                });
             }
         });
     </script>
