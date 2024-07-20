@@ -43,7 +43,7 @@ if ($result_siswa->num_rows > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Nilai</title>
-    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" />
 
@@ -73,11 +73,14 @@ if ($result_siswa->num_rows > 0) {
             border-collapse: collapse;
         }
 
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid #ddd;
         }
 
-        th, td {
+        th,
+        td {
             padding: 10px;
             text-align: left;
         }
@@ -143,7 +146,7 @@ if ($result_siswa->num_rows > 0) {
 
 <body>
     <nav>
-        <label class="logo">DesignX</label>
+        <label class="logo">KKP</label>
         <ul>
             <li><a href="index.html">Home</a></li>
             <li><a href="#">Dashboard</a></li>
@@ -186,16 +189,17 @@ if ($result_siswa->num_rows > 0) {
             </thead>
             <tbody>
                 <?php if (!empty($nilaiData)) : foreach ($nilaiData as $row) : ?>
-                    <tr>
-                        <td><?= $row['nama_siswa'] ?></td>
-                        <td><?= $row['mata_pelajaran'] ?></td>
-                        <td><?= $row['nilai'] ?></td>
-                        <td class="actions">
-                            <i class="fas fa-edit edit"></i>
-                            <i class="fas fa-trash delete"></i>
-                        </td>
-                    </tr>
-                <?php endforeach; else : ?>
+                        <tr>
+                            <td><?= $row['nama_siswa'] ?></td>
+                            <td><?= $row['mata_pelajaran'] ?></td>
+                            <td><?= $row['nilai'] ?></td>
+                            <td class="actions">
+                                <i class="fas fa-edit edit"></i>
+                                <i class="fas fa-trash delete"></i>
+                            </td>
+                        </tr>
+                    <?php endforeach;
+                else : ?>
                     <tr>
                         <td colspan="4">No data available</td>
                     </tr>

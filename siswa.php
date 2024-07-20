@@ -14,7 +14,9 @@ if (isset($_POST['add_siswa'])) {
     }
 }
 
-$sql = "SELECT * FROM siswa";
+$sql = "SELECT s.nama_siswa, k.nama_kelas, j.nama_jurusan FROM siswa s
+        JOIN kelas k ON k.id_kelas = s.id_kelas
+        JOIN jurusan j ON j.id_jurusan = s.id_jurusan";
 $result = $conn->query($sql);
 $siswaData = [];
 if ($result->num_rows > 0) {
@@ -33,7 +35,7 @@ if ($result->num_rows > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Siswa</title>
-    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" />
 
@@ -63,11 +65,14 @@ if ($result->num_rows > 0) {
             border-collapse: collapse;
         }
 
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid #ddd;
         }
 
-        th, td {
+        th,
+        td {
             padding: 10px;
             text-align: left;
         }
@@ -128,15 +133,43 @@ if ($result->num_rows > 0) {
             text-decoration: none;
             cursor: pointer;
         }
+
+        .button1 {
+            padding: 10px 20px;
+            color: white;
+            background-color: #2d7eff;
+            border: 3px solid transparent;
+            transition: .2s ease;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .button1:hover {
+            color: #2d7eff;
+            background-color: white;
+            transform: scale(1.1);
+            border: 3px solid #2d7eff;
+        }
+
+        .frameTable {
+            margin-top: 20px !important;
+        }
+
+        .dt-button {
+            margin-left: 10px !important;
+            color: #ffffff !important;
+            background-color: #28a745 !important;
+            padding: 5px 10px 0px 10px !important;
+        }
     </style>
 </head>
 
 <body>
     <nav>
-        <label class="logo">DesignX</label>
+        <label class="logo">KKP</label>
         <ul>
             <li><a href="index.html">Home</a></li>
-            <li><a href="#">Dashboard</a></li>
+            <li><a href="dashboard.php">Dashboard</a></li>
             <li><a href="guru.php">Guru</a></li>
             <li><a class="active" href="siswa.php">Siswa</a></li>
             <li><a href="nilai.php">Nilai</a></li>
@@ -145,7 +178,6 @@ if ($result->num_rows > 0) {
 
     <div class="container">
         <h2 class="header-table">Data Siswa</h2>
-        <button id="openModalBtn">Add Siswa</button>
         <div id="addSiswaModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
@@ -159,40 +191,61 @@ if ($result->num_rows > 0) {
             </div>
         </div>
 
-        <table id="tableSiswa" class="display">
-            <thead>
-                <tr>
-                    <th>Nama</th>
-                    <th>Kelas</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($siswaData)) : foreach ($siswaData as $row) : ?>
+        <a id="openModalBtn" class="button1">Tambahkan Murid</a>
+        <div class="frameTable">
+            <table id="tableSiswa" class="display">
+                <thead>
                     <tr>
-                        <td><?= $row['nama_siswa'] ?></td>
-                        <td><?= $row['kelas'] ?></td>
-                        <td class="actions">
-                            <i class="fas fa-edit edit"></i>
-                            <i class="fas fa-trash delete"></i>
-                        </td>
+                        <th>Nama</th>
+                        <th>Kelas</th>
+                        <th>Jurusan</th>
+                        <th>Actions</th>
                     </tr>
-                <?php endforeach; else : ?>
-                    <tr>
-                        <td colspan="3">No data available</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php if (!empty($siswaData)) : foreach ($siswaData as $row) : ?>
+                            <tr>
+                                <td><?= $row['nama_siswa'] ?></td>
+                                <td><?= $row['nama_kelas'] ?></td>
+                                <td><?= $row['nama_jurusan'] ?></td>
+                                <td class="actions">
+                                    <i class="fas fa-edit edit"></i>
+                                    <i class="fas fa-trash delete"></i>
+                                </td>
+                            </tr>
+                        <?php endforeach;
+                    else : ?>
+                        <tr>
+                            <td colspan="3">No data available</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- jQuery Library -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#tableSiswa').DataTable();
+            $('#tableSiswa').DataTable({
+                dom: 'lBftip',
+                buttons: [{
+                    text: '<i class="fas fa-file-excel"></i>',
+                    extend: 'excel',
+                    title: 'Data Siswa',
+                    footer: true
+                }],
+                initComplete: function() {
+                    $(".dt-buttons").css("float", "right").insertBefore("#tableSiswa_filter label");
+                }
+            });
 
             const modal = document.getElementById('addSiswaModal');
             const btn = document.getElementById('openModalBtn');

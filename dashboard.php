@@ -37,7 +37,7 @@ if ($result->num_rows > 0) {
 <head>
     <meta charset="UTF-8">
     <title>Data Kelas, Jurusan, dan Mapel</title>
-    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" />
 
@@ -150,7 +150,7 @@ if ($result->num_rows > 0) {
         <label for="check" class="checkbtn">
             <i class="fas fa-bars"></i>
         </label>
-        <label class="logo">DesignX</label>
+        <label class="logo">KKP</label>
         <ul>
             <li><a class="active" href="#">Home</a></li>
             <li><a href="guru.php">Guru</a></li>
@@ -197,25 +197,19 @@ if ($result->num_rows > 0) {
 
         <div id="KelasX" class="tabcontent">
             <h3>Kelas X</h3>
-            <table>
+            <table id="tableKelasX">
                 <thead>
                     <tr>
-                        <th>ID Kelas</th>
                         <th>Nama Kelas</th>
-                        <th>ID Jurusan</th>
                         <th>Nama Jurusan</th>
-                        <th>ID Mapel</th>
                         <th>Nama Mapel</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($records['Kelas X'] as $record) : ?>
                         <tr>
-                            <td><?php echo $record['id_kelas']; ?></td>
                             <td><?php echo $record['nama_kelas']; ?></td>
-                            <td><?php echo $record['id_jurusan']; ?></td>
                             <td><?php echo $record['nama_jurusan']; ?></td>
-                            <td><?php echo $record['id_mapel']; ?></td>
                             <td><?php echo $record['nama_mapel']; ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -225,25 +219,19 @@ if ($result->num_rows > 0) {
 
         <div id="KelasXI" class="tabcontent">
             <h3>Kelas XI</h3>
-            <table>
+            <table id="tableKelasXI">
                 <thead>
                     <tr>
-                        <th>ID Kelas</th>
                         <th>Nama Kelas</th>
-                        <th>ID Jurusan</th>
                         <th>Nama Jurusan</th>
-                        <th>ID Mapel</th>
                         <th>Nama Mapel</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($records['Kelas XI'] as $record) : ?>
                         <tr>
-                            <td><?php echo $record['id_kelas']; ?></td>
                             <td><?php echo $record['nama_kelas']; ?></td>
-                            <td><?php echo $record['id_jurusan']; ?></td>
                             <td><?php echo $record['nama_jurusan']; ?></td>
-                            <td><?php echo $record['id_mapel']; ?></td>
                             <td><?php echo $record['nama_mapel']; ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -253,25 +241,19 @@ if ($result->num_rows > 0) {
 
         <div id="KelasXII" class="tabcontent">
             <h3>Kelas XII</h3>
-            <table>
+            <table id="tableKelasXII">
                 <thead>
                     <tr>
-                        <th>ID Kelas</th>
                         <th>Nama Kelas</th>
-                        <th>ID Jurusan</th>
                         <th>Nama Jurusan</th>
-                        <th>ID Mapel</th>
                         <th>Nama Mapel</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($records['Kelas XII'] as $record) : ?>
                         <tr>
-                            <td><?php echo $record['id_kelas']; ?></td>
                             <td><?php echo $record['nama_kelas']; ?></td>
-                            <td><?php echo $record['id_jurusan']; ?></td>
                             <td><?php echo $record['nama_jurusan']; ?></td>
-                            <td><?php echo $record['id_mapel']; ?></td>
                             <td><?php echo $record['nama_mapel']; ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -280,6 +262,8 @@ if ($result->num_rows > 0) {
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
     <script>
         function openTab(evt, tabName) {
             var i, tabcontent, tablinks;
@@ -297,6 +281,13 @@ if ($result->num_rows > 0) {
 
         // Open default tab
         document.getElementsByClassName("tablinks")[0].click();
+
+        // Initialize DataTables
+        $(document).ready(function() {
+            $('#tableKelasX').DataTable();
+            $('#tableKelasXI').DataTable();
+            $('#tableKelasXII').DataTable();
+        });
     </script>
 </body>
 

@@ -34,7 +34,7 @@ if ($result->num_rows > 0) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Guru</title>
-    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" />
 
@@ -64,11 +64,14 @@ if ($result->num_rows > 0) {
             border-collapse: collapse;
         }
 
-        table, th, td {
+        table,
+        th,
+        td {
             border: 1px solid #ddd;
         }
 
-        th, td {
+        th,
+        td {
             padding: 10px;
             text-align: left;
         }
@@ -134,10 +137,10 @@ if ($result->num_rows > 0) {
 
 <body>
     <nav>
-        <label class="logo">DesignX</label>
+        <label class="logo">KKP</label>
         <ul>
             <li><a href="index.html">Home</a></li>
-            <li><a href="#">Dashboard</a></li>
+            <li><a href="dashboard.php">Dashboard</a></li>
             <li><a class="active" href="guru.php">Guru</a></li>
             <li><a href="siswa.php">Siswa</a></li>
             <li><a href="nilai.php">Nilai</a></li>
@@ -173,16 +176,17 @@ if ($result->num_rows > 0) {
             </thead>
             <tbody>
                 <?php if (!empty($guruData)) : foreach ($guruData as $index => $row) : ?>
-                    <tr>
-                        <td><?php echo $row['nama_guru']; ?></td>
-                        <td><?php echo $row['nip']; ?></td>
-                        <td><?php echo $row['no_telp']; ?></td>
-                        <td class="actions">
-                            <i class="fas fa-edit edit"></i>
-                            <i class="fas fa-trash delete"></i>
-                        </td>
-                    </tr>
-                <?php endforeach; else : ?>
+                        <tr>
+                            <td><?php echo $row['nama_guru']; ?></td>
+                            <td><?php echo $row['nip']; ?></td>
+                            <td><?php echo $row['no_telp']; ?></td>
+                            <td class="actions">
+                                <i class="fas fa-edit edit"></i>
+                                <i class="fas fa-trash delete"></i>
+                            </td>
+                        </tr>
+                    <?php endforeach;
+                else : ?>
                     <tr>
                         <td colspan="4">No data available</td>
                     </tr>
