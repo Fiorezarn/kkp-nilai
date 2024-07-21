@@ -4,10 +4,12 @@ session_start();
 
 $id_kelas = $_GET['id_kelas'];
 $id_mapel = $_GET['id_mapel'];
+$tipe = $_GET['tipe'];
+$kd = $_GET['kd'];
 
-// Ambil data nilai siswa dari database berdasarkan kelas dan mapel
+// Ambil data nilai siswa dari database berdasarkan kelas, mapel, tipe, dan kd
 $sql = "
-    SELECT s.id_siswa, s.nama_siswa, s.nis, 
+    SELECT n.id_nilai, n.id_siswa, s.nama_siswa, s.nis, n.kd, n.tipe,
            COALESCE(n.tugas_1, 'Belum Ada') as tugas_1,
            COALESCE(n.tugas_2, 'Belum Ada') as tugas_2,
            COALESCE(n.tugas_3, 'Belum Ada') as tugas_3,
@@ -16,9 +18,9 @@ $sql = "
            COALESCE(n.tugas_6, 'Belum Ada') as tugas_6,
            COALESCE(n.uh_1, 'Belum Ada') as uh_1,
            COALESCE(n.uh_2, 'Belum Ada') as uh_2
-    FROM siswa s
-    LEFT JOIN nilai n ON s.id_siswa = n.id_siswa
-    WHERE s.id_kelas = $id_kelas
+    FROM nilai n
+    JOIN siswa s ON n.id_siswa = s.id_siswa
+    WHERE s.id_kelas = $id_kelas AND n.id_mapel = $id_mapel AND n.tipe = '$tipe' AND n.kd = $kd
 ";
 $result = $conn->query($sql);
 if (!$result) {
@@ -79,14 +81,17 @@ if (!$mapel) {
         .header h2 {
             margin: 0;
         }
-        .logout {
-            background-color: #dc3545;
+        .logout, .add-student {
+            background-color: #28a745;
             color: #fff;
             border: none;
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             text-decoration: none;
+        }
+        .logout {
+            background-color: #dc3545;
         }
         table {
             width: 100%;
@@ -102,10 +107,58 @@ if (!$mapel) {
         th {
             background-color: #f2f2f2;
         }
+        #editModal, #addStudentModal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        #modalContent, #modalAddContent {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
     </style>
     <script>
         $(document).ready(function() {
             $('#nilaiTable').DataTable();
+
+            $('.editBtn').on('click', function() {
+                var idNilai = $(this).data('id');
+                var nilai = JSON.parse($(this).data('nilai'));
+                $('#editIdNilai').val(idNilai);
+                $('#editKd').val(nilai.kd);
+                $('#editTipe').val(nilai.tipe);
+                $('#editTugas1').val(nilai.tugas_1);
+                $('#editTugas2').val(nilai.tugas_2);
+                $('#editTugas3').val(nilai.tugas_3);
+                $('#editTugas4').val(nilai.tugas_4);
+                $('#editTugas5').val(nilai.tugas_5);
+                $('#editTugas6').val(nilai.tugas_6);
+                $('#editUh1').val(nilai.uh_1);
+                $('#editUh2').val(nilai.uh_2);
+                $('#editModal').show();
+            });
+
+            $('#closeModal').on('click', function() {
+                $('#editModal').hide();
+            });
+
+            $('.add-student').on('click', function() {
+                $('#addStudentModal').show();
+            });
+
+            $('#closeAddModal').on('click', function() {
+                $('#addStudentModal').hide();
+            });
         });
     </script>
 </head>
@@ -113,13 +166,18 @@ if (!$mapel) {
     <div class="container">
         <div class="header">
             <h2>Nilai Siswa - <?php echo htmlspecialchars($kelas['nama_kelas']); ?> - <?php echo htmlspecialchars($mapel['nama_mapel']); ?></h2>
-            <a href="logout_guru.php" class="logout">Logout</a>
+            <div>
+                <a href="logout_guru.php" class="logout">Logout</a>
+                <button class="add-student">Tambah Siswa</button>
+            </div>
         </div>
         <table id="nilaiTable" class="display">
             <thead>
                 <tr>
                     <th>Nama Siswa</th>
                     <th>NIS</th>
+                    <th>KD</th>
+                    <th>Tipe</th>
                     <th>Tugas 1</th>
                     <th>Tugas 2</th>
                     <th>Tugas 3</th>
@@ -136,6 +194,8 @@ if (!$mapel) {
                     <tr>
                         <td><?php echo htmlspecialchars($row['nama_siswa']); ?></td>
                         <td><?php echo htmlspecialchars($row['nis']); ?></td>
+                        <td><?php echo htmlspecialchars($row['kd']); ?></td>
+                        <td><?php echo htmlspecialchars($row['tipe']); ?></td>
                         <td><?php echo htmlspecialchars($row['tugas_1']); ?></td>
                         <td><?php echo htmlspecialchars($row['tugas_2']); ?></td>
                         <td><?php echo htmlspecialchars($row['tugas_3']); ?></td>
@@ -145,7 +205,7 @@ if (!$mapel) {
                         <td><?php echo htmlspecialchars($row['uh_1']); ?></td>
                         <td><?php echo htmlspecialchars($row['uh_2']); ?></td>
                         <td>
-                            <button class="editBtn" data-id="<?php echo htmlspecialchars($row['id_siswa']); ?>" data-nilai="<?php echo htmlspecialchars(json_encode($row)); ?>">Edit</button>
+                            <button class="editBtn" data-id="<?php echo htmlspecialchars($row['id_nilai']); ?>" data-nilai='<?php echo json_encode($row); ?>'>Edit</button>
                         </td>
                     </tr>
                 <?php endwhile; ?>
@@ -153,59 +213,72 @@ if (!$mapel) {
         </table>
     </div>
 
-    <!-- Modal -->
-    <div id="editModal" style="display:none;">
-        <div style="background-color: rgba(0,0,0,0.5); position: fixed; top: 0; left: 0; width: 100%; height: 100%;">
-            <div style="background-color: white; padding: 20px; margin: 50px auto; width: 300px;">
-                <h2>Edit Nilai</h2>
-                <form id="editForm" method="POST" action="update_nilai.php">
-                    <input type="hidden" name="id_siswa" id="editIdSiswa">
-                    <input type="hidden" name="id_kelas" value="<?php echo htmlspecialchars($id_kelas); ?>">
-                    <input type="hidden" name="id_mapel" value="<?php echo htmlspecialchars($id_mapel); ?>">
-                    <label for="tugas_1">Tugas 1:</label>
-                    <input type="number" name="tugas_1" id="editTugas1">
-                    <label for="tugas_2">Tugas 2:</label>
-                    <input type="number" name="tugas_2" id="editTugas2">
-                    <label for="tugas_3">Tugas 3:</label>
-                    <input type="number" name="tugas_3" id="editTugas3">
-                    <label for="tugas_4">Tugas 4:</label>
-                    <input type="number" name="tugas_4" id="editTugas4">
-                    <label for="tugas_5">Tugas 5:</label>
-                    <input type="number" name="tugas_5" id="editTugas5">
-                    <label for="tugas_6">Tugas 6:</label>
-                    <input type="number" name="tugas_6" id="editTugas6">
-                    <label for="uh_1">UH 1:</label>
-                    <input type="number" name="uh_1" id="editUh1">
-                    <label for="uh_2">UH 2:</label>
-                    <input type="number" name="uh_2" id="editUh2">
-                    <button type="submit">Save</button>
-                    <button type="button" id="closeModal">Cancel</button>
-                </form>
-            </div>
+    <!-- Modal Edit -->
+    <div id="editModal">
+        <div id="modalContent">
+            <h2>Edit Nilai</h2>
+            <form id="editForm" method="POST" action="update_nilai.php">
+                <input type="hidden" name="id_nilai" id="editIdNilai">
+                <input type="hidden" name="id_kelas" value="<?php echo htmlspecialchars($id_kelas); ?>">
+                <input type="hidden" name="id_mapel" value="<?php echo htmlspecialchars($id_mapel); ?>">
+                <label for="kd">KD:</label>
+                <input type="number" name="kd" id="editKd" required>
+                <label for="tipe">Tipe:</label>
+                <select name="tipe" id="editTipe" required>
+                    <option value="pengetahuan">Pengetahuan</option>
+                    <option value="keterampilan">Keterampilan</option>
+                </select>
+                <label for="tugas_1">Tugas 1:</label>
+                <input type="number" name="tugas_1" id="editTugas1">
+                <label for="tugas_2">Tugas 2:</label>
+                <input type="number" name="tugas_2" id="editTugas2">
+                <label for="tugas_3">Tugas 3:</label>
+                <input type="number" name="tugas_3" id="editTugas3">
+                <label for="tugas_4">Tugas 4:</label>
+                <input type="number" name="tugas_4" id="editTugas4">
+                <label for="tugas_5">Tugas 5:</label>
+                <input type="number" name="tugas_5" id="editTugas5">
+                <label for="tugas_6">Tugas 6:</label>
+                <input type="number" name="tugas_6" id="editTugas6">
+                <label for="uh_1">UH 1:</label>
+                <input type="number" name="uh_1" id="editUh1">
+                <label for="uh_2">UH 2:</label>
+                <input type="number" name="uh_2" id="editUh2">
+                <button type="submit">Save</button>
+                <button type="button" id="closeModal">Cancel</button>
+            </form>
         </div>
     </div>
 
-    <script>
-        $(document).ready(function() {
-            $('.editBtn').on('click', function() {
-                var idSiswa = $(this).data('id');
-                var nilai = JSON.parse($(this).data('nilai'));
-                $('#editIdSiswa').val(idSiswa);
-                $('#editTugas1').val(nilai.tugas_1);
-                $('#editTugas2').val(nilai.tugas_2);
-                $('#editTugas3').val(nilai.tugas_3);
-                $('#editTugas4').val(nilai.tugas_4);
-                $('#editTugas5').val(nilai.tugas_5);
-                $('#editTugas6').val(nilai.tugas_6);
-                $('#editUh1').val(nilai.uh_1);
-                $('#editUh2').val(nilai.uh_2);
-                $('#editModal').show();
-            });
-
-            $('#closeModal').on('click', function() {
-                $('#editModal').hide();
-            });
-        });
-    </script>
+    <!-- Modal Tambah Siswa ke Tabel Nilai -->
+    <div id="addStudentModal">
+        <div id="modalAddContent">
+            <h2>Tambah Siswa ke Tabel Nilai</h2>
+            <form id="addStudentForm" method="POST" action="tambah_nilai.php">
+                <input type="hidden" name="id_kelas" value="<?php echo htmlspecialchars($id_kelas); ?>">
+                <input type="hidden" name="id_mapel" value="<?php echo htmlspecialchars($id_mapel); ?>">
+                <label for="id_siswa">Nama Siswa:</label>
+                <select name="id_siswa" id="id_siswa" required>
+                    <?php
+                    // Ambil daftar siswa berdasarkan id_kelas
+                    $sql_siswa = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_kelas = $id_kelas";
+                    $result_siswa = $conn->query($sql_siswa);
+                    while ($siswa = $result_siswa->fetch_assoc()) {
+                        echo '<option value="' . htmlspecialchars($siswa['id_siswa']) . '">' . htmlspecialchars($siswa['nama_siswa']) . '</option>';
+                    }
+                    ?>
+                </select>
+                <label for="kd">KD:</label>
+                <input type="number" name="kd" id="kd" required>
+                <label for="tipe">Tipe:</label>
+                <select name="tipe" id="tipe" required>
+                    <option value="pengetahuan">Pengetahuan</option>
+                    <option value="keterampilan">Keterampilan</option>
+                </select>
+                <button type="submit">Tambah</button>
+                <button type="button" id="closeAddModal">Cancel</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

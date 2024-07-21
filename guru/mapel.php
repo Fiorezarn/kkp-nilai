@@ -90,7 +90,7 @@ if (!$kelas) {
         </div>
         <div class="class-list">
             <?php while($row = $result->fetch_assoc()) : ?>
-                <a href="nilai.php?id_kelas=<?php echo $id_kelas; ?>&id_mapel=<?php echo $row['id_mapel']; ?>" class="card">
+                <a href="pilih_tipe.php?id_kelas=<?php echo $id_kelas; ?>&id_mapel=<?php echo $row['id_mapel']; ?>" class="card">
                     <h3><i class="fas fa-book"></i> <?php echo htmlspecialchars($row['nama_mapel']); ?></h3>
                 </a>
             <?php endwhile; ?>
