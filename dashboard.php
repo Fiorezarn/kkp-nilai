@@ -1,6 +1,14 @@
 <?php
 include 'koneksi.php';
 
+session_start();
+
+if(!isset($_SESSION['login_user'])){
+    header("location: login.php");
+    die();
+}
+    
+
 // Mengambil data dari database
 $sql = "SELECT k.id_kelas, k.nama_kelas, j.id_jurusan, j.nama_jurusan, m.id_mapel, m.nama_mapel
         FROM kelas_jurusan_mapel kjm
@@ -156,6 +164,7 @@ if ($result->num_rows > 0) {
             <li><a href="guru.php">Guru</a></li>
             <li><a href="siswa.php">Siswa</a></li>
             <li><a href="nilai.php">Nilai</a></li>
+            <li><a href="logout.php">Logout</a></li>
         </ul>
     </nav>
 
