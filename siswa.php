@@ -258,14 +258,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_siswa'])) {
                     {
                         data: null,
                         className: 'actions',
-                        defaultContent: `
-            <button class="edit-btn">
-                <i class="fas fa-edit edit"></i>
-            </button>
-            <button class="delete-btn" data-id="">
-                <i class="fas fa-trash delete"></i>
-            </button>
-        `,
+                        render: function(data, type, row) {
+                            return `
+                <button class="edit-btn">
+                    <i class="fas fa-edit edit"></i>
+                </button>
+                <button class="delete-btn" data-id="${row.id_siswa}">
+                    <i class="fas fa-trash delete"></i>
+                </button>
+            `;
+                        },
                         orderable: false
                     }
                 ],
@@ -325,8 +327,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_siswa'])) {
                 var id = data.id_siswa;
                 $('#edit_id_siswa').val(id);
                 $('#edit_nama_siswa').val(data.nama_siswa);
-                $('#edit_kelas').val(data.id_kelas);
-                $('#edit_jurusan').val(data.id_jurusan);
+                $('#edit_kelas').val(data.nama_kelas);
+                $('#edit_jurusan').val(data.nama_jurusan);
                 editModal.style.display = 'block';
                 populateEditJurusanOptions();
             });
@@ -420,6 +422,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_siswa'])) {
             $("#editSiswaForm").on("submit", function(event) {
                 event.preventDefault();
                 var formData = new FormData(this);
+                formData.append('nama_siswa', $("#edit_nama_siswa").val());
+                formData.append('id_kelas', $("#edit_kelas").val());
+                formData.append('id_jurusan', $("#edit_jurusan").val());
                 $.ajax({
                     url: 'siswa-script.php?action=updateSiswa',
                     method: 'POST',

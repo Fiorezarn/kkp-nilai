@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 19, 2024 at 05:07 PM
+-- Generation Time: Jul 20, 2024 at 06:49 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,8 +39,8 @@ CREATE TABLE `guru` (
 --
 
 INSERT INTO `guru` (`id_guru`, `nama_guru`, `nip`, `no_telp`) VALUES
-(1, 'ajaw binal', '802131231123', '0923213123123'),
-(2, 'pler gaming guru', '13123313', '1231231');
+(1, 'Adian Ali', '802131231123', '0923213123123'),
+(2, 'Sugiono', '13123313', '1231231');
 
 -- --------------------------------------------------------
 
@@ -946,17 +946,19 @@ CREATE TABLE `nilai_siswa` (
 
 CREATE TABLE `siswa` (
   `id_siswa` int(11) NOT NULL,
-  `nama_siswa` varchar(255) NOT NULL
+  `nama_siswa` varchar(255) NOT NULL,
+  `id_kelas` int(11) DEFAULT NULL,
+  `id_jurusan` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `siswa`
 --
 
-INSERT INTO `siswa` (`id_siswa`, `nama_siswa`) VALUES
-(1, 'Ajaw Kontol'),
-(2, 'wakwaw gaming'),
-(3, 'pler gaming');
+INSERT INTO `siswa` (`id_siswa`, `nama_siswa`, `id_kelas`, `id_jurusan`) VALUES
+(1, 'Sony Wakwaw', 1, 1),
+(5, 'sadasdasd', 1, 1),
+(6, 'ajaw ngentot', 3, 5);
 
 --
 -- Indexes for dumped tables
@@ -1040,7 +1042,7 @@ ALTER TABLE `nilai`
 -- AUTO_INCREMENT for table `siswa`
 --
 ALTER TABLE `siswa`
-  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
