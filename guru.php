@@ -148,11 +148,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
     <nav>
         <label class="logo">KKP</label>
         <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="dashboard.php">Dashboard</a></li>
             <li><a class="active" href="guru.php">Guru</a></li>
             <li><a href="siswa.php">Siswa</a></li>
-            <li><a href="nilai.php">Nilai</a></li>
+            <li><a href="logout.php">Logout</a></li>
         </ul>
     </nav>
 

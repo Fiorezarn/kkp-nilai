@@ -50,12 +50,14 @@ if (!$mapel) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nilai Siswa - <?php echo htmlspecialchars($kelas['nama_kelas']); ?> - <?php echo htmlspecialchars($mapel['nama_mapel']); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
     <style>
@@ -65,20 +67,70 @@ if (!$mapel) {
             margin: 0;
             padding: 20px;
         }
+
+        /* CSS untuk kartu informasi */
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .card {
+            flex: 1 1 calc(20% - 10px);
+            background-color: #f8f9fa;
+            padding: 20px;
+            margin: 5px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .card h3 {
+            margin: 10px 0;
+            font-size: 1.5em;
+        }
+
+        .card p {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .card i {
+            font-size: 2em;
+            color: #007bff;
+        }
+
+        /* Responsif */
+        @media (max-width: 768px) {
+            .card {
+                flex: 1 1 calc(50% - 10px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                flex: 1 1 100%;
+            }
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
+
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
+
         .header h2 {
             margin: 0;
         }
+
         .logout {
             background-color: #dc3545;
             color: #fff;
@@ -88,17 +140,24 @@ if (!$mapel) {
             cursor: pointer;
             text-decoration: none;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        table, th, td {
+
+        table,
+        th,
+        td {
             border: 1px solid black;
         }
-        th, td {
+
+        th,
+        td {
             padding: 15px;
             text-align: left;
         }
+
         th {
             background-color: #f2f2f2;
         }
@@ -109,6 +168,7 @@ if (!$mapel) {
         });
     </script>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -132,7 +192,7 @@ if (!$mapel) {
                 </tr>
             </thead>
             <tbody>
-                <?php while($row = $result->fetch_assoc()) : ?>
+                <?php while ($row = $result->fetch_assoc()) : ?>
                     <tr>
                         <td><?php echo htmlspecialchars($row['nama_siswa']); ?></td>
                         <td><?php echo htmlspecialchars($row['nis']); ?></td>
@@ -208,4 +268,5 @@ if (!$mapel) {
         });
     </script>
 </body>
+
 </html>
