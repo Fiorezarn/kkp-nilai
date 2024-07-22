@@ -3,6 +3,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
     header("Location: guru.php");
     exit();
 }
+
+// if (!isset($_SESSION['login'])) {
+//     header("location: login.php");
+//     die();
+// }
 ?>
 
 <!DOCTYPE html>
@@ -76,6 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
             color: #28a745;
         }
 
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -85,7 +91,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgb(0, 0, 0);
             background-color: rgba(0, 0, 0, 0.4);
         }
 
@@ -95,6 +100,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
         }
 
         .close {
@@ -109,10 +116,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
             color: black;
             text-decoration: none;
             cursor: pointer;
-        }
-
-        .frameTable {
-            margin-top: 20px !important;
         }
 
         .button1 {
@@ -132,14 +135,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
             border: 3px solid #2d7eff;
         }
 
+        .buttonDelete {
+            padding: 10px 20px;
+            color: white;
+            background-color: #dc3545;
+            border: 3px solid transparent;
+            transition: .2s ease;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .frameTable {
+            margin-top: 20px !important;
+        }
+
         .dt-button {
             margin-left: 10px !important;
             color: #ffffff !important;
             background-color: #28a745 !important;
-            padding: 5px 10px 5px 10px !important;
+            padding: 5px 10px !important;
             border: #ddd;
             border-radius: 2px;
             cursor: pointer;
+        }
+
+        .modal form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal form label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .modal form input,
+        .modal form select,
+        .modal form button {
+            margin-top: 5px;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .modal form button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .modal form button:hover {
+            background-color: #218838;
         }
     </style>
 </head>
@@ -214,7 +262,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
             <span class="close close-delete">&times;</span>
             <h2>Confirm Deletion</h2>
             <p>Are you sure you want to delete <span id="delete-item-name"></span>? This action cannot be undone.</p>
-            <button id="confirmDeleteBtn" class="button1">Delete</button>
+            <button id="confirmDeleteBtn" class="buttonDelete">Delete</button>
             <button id="cancelDeleteBtn" class="button1" style="background-color: #6c757d;">Cancel</button>
         </div>
     </div>
@@ -251,13 +299,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
                         className: 'actions',
                         render: function(data, type, row) {
                             return `
-                <button class="edit-btn">
-                    <i class="fas fa-edit edit"></i>
-                </button>
-                <button class="delete-btn" data-id="${row.id_guru}">
-                    <i class="fas fa-trash delete"></i>
-                </button>
-            `;
+                            <button class="edit-btn">
+                                <i class="fas fa-edit edit"></i>
+                            </button>
+                            <button class="delete-btn" data-id="${row.id_guru}">
+                                <i class="fas fa-trash delete"></i>
+                            </button>
+                        `;
                         },
                         orderable: false
                     }
@@ -274,41 +322,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
                 }
             });
 
-            const addBtn = document.getElementById('openModalBtn');
+            // Variables for the modals
             const addModal = document.getElementById('addGuruModal');
             const addCloseBtn = document.querySelector('#addGuruModal .close');
-            const modal = document.getElementById('addGuruModal');
-            const btn = document.getElementById('openModalBtn');
+            const editModal = document.getElementById('editGuruModal');
+            const editCloseBtn = document.querySelector('#editGuruModal .close');
             const deleteModal = document.getElementById('deleteConfirmModal');
-            const span = document.getElementsByClassName('close')[0];
             const deleteCloseBtn = document.querySelector('#deleteConfirmModal .close-delete');
             const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
             const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-            const editModal = document.getElementById('editGuruModal');
-            const editCloseBtn = document.querySelector('#editGuruModal .close-edit');
 
-            addBtn.onclick = function() {
+            // Open the add modal
+            document.getElementById('openModalBtn').onclick = function() {
                 addModal.style.display = 'block';
-            }
+            };
 
+            // Close the add modal
             addCloseBtn.onclick = function() {
                 addModal.style.display = 'none';
-            }
+            };
 
-            btn.onclick = function() {
-                modal.style.display = 'block';
-            }
-
-            span.onclick = function() {
-                modal.style.display = 'none';
-            }
-
+            // Close the modals when clicking outside of them
             window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
+                if (event.target == addModal) {
+                    addModal.style.display = 'none';
+                } else if (event.target == editModal) {
+                    editModal.style.display = 'none';
+                } else if (event.target == deleteModal) {
+                    deleteModal.style.display = 'none';
                 }
-            }
+            };
 
+            // Add Guru form submission
             $("#addGuruForm").on("submit", function(event) {
                 event.preventDefault();
                 var formData = $(this).serialize();
@@ -326,23 +371,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
                 });
             });
 
-            $('#tableGuru tbody').on('click', '.delete-btn', function() {
-                var data = table.row($(this).parents('tr')).data();
-                var id = data.id_guru;
-                var name = data.nama_guru;
-                $('#delete-item-name').text(name);
-                deleteModal.style.display = 'block';
-
-                confirmDeleteBtn.onclick = function() {
-                    confirmDelete(id);
-                    deleteModal.style.display = 'none';
-                }
-
-                cancelDeleteBtn.onclick = function() {
-                    deleteModal.style.display = 'none';
-                }
-            });
-
+            // Edit Guru button click event
             $('#tableGuru tbody').on('click', '.edit-btn', function() {
                 var data = table.row($(this).parents('tr')).data();
                 var id = data.id_guru;
@@ -353,6 +382,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
                 editModal.style.display = 'block';
             });
 
+            // Close the edit modal
+            editCloseBtn.onclick = function() {
+                editModal.style.display = 'none';
+            };
+
+            // Edit Guru form submission
             $("#editGuruForm").on("submit", function(event) {
                 event.preventDefault();
                 var formData = new FormData(this);
@@ -376,6 +411,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
                 });
             });
 
+            // Delete Guru button click event
+            $('#tableGuru tbody').on('click', '.delete-btn', function() {
+                var data = table.row($(this).parents('tr')).data();
+                var id = data.id_guru;
+                var name = data.nama_guru;
+                $('#delete-item-name').text(name);
+                deleteModal.style.display = 'block';
+
+                confirmDeleteBtn.onclick = function() {
+                    confirmDelete(id);
+                    deleteModal.style.display = 'none';
+                };
+
+                cancelDeleteBtn.onclick = function() {
+                    deleteModal.style.display = 'none';
+                };
+            });
+
+            // Close the delete modal
+            deleteCloseBtn.onclick = function() {
+                deleteModal.style.display = 'none';
+            };
+
+            // Confirm delete function
             function confirmDelete(id) {
                 $.ajax({
                     url: `guru-script.php?action=deleteGuru&id_guru=${id}`,
@@ -390,6 +449,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
             }
         });
     </script>
+
 </body>
 
 </html>

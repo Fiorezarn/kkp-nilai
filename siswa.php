@@ -3,6 +3,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_siswa'])) {
     header("Location: siswa.php");
     exit();
 }
+
+// if (!isset($_SESSION['login'])) {
+//     header("location: login.php");
+//     die();
+// }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,6 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_siswa'])) {
             color: #28a745;
         }
 
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -84,7 +90,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_siswa'])) {
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgb(0, 0, 0);
             background-color: rgba(0, 0, 0, 0.4);
         }
 
@@ -94,6 +99,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_siswa'])) {
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
         }
 
         .close {
@@ -127,6 +134,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_siswa'])) {
             border: 3px solid #2d7eff;
         }
 
+        .buttonDelete {
+            padding: 10px 20px;
+            color: white;
+            background-color: #dc3545;
+            border: 3px solid transparent;
+            transition: .2s ease;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
         .frameTable {
             margin-top: 20px !important;
         }
@@ -135,10 +152,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_siswa'])) {
             margin-left: 10px !important;
             color: #ffffff !important;
             background-color: #28a745 !important;
-            padding: 5px 10px 5px 10px !important;
+            padding: 5px 10px !important;
             border: #ddd;
             border-radius: 2px;
             cursor: pointer;
+        }
+
+        .modal form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal form label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .modal form input,
+        .modal form select,
+        .modal form button {
+            margin-top: 5px;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .modal form button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .modal form button:hover {
+            background-color: #218838;
         }
     </style>
 </head>
@@ -179,7 +227,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_siswa'])) {
             <span class="close close-delete">&times;</span>
             <h2>Confirm Deletion</h2>
             <p>Are you sure you want to delete <span id="delete-item-name"></span>? This action cannot be undone.</p>
-            <button id="confirmDeleteBtn" class="button1">Delete</button>
+            <button id="confirmDeleteBtn" class="buttonDelete">Delete</button>
             <button id="cancelDeleteBtn" class="button1" style="background-color: #6c757d;">Cancel</button>
         </div>
     </div>
