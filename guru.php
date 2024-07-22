@@ -4,10 +4,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_guru'])) {
     exit();
 }
 
-// if (!isset($_SESSION['login'])) {
-//     header("location: login.php");
-//     die();
-// }
+session_start();
+
+if (!isset($_SESSION['login_user'])) {
+    header("location: login.php");
+    die();
+}
+
 ?>
 
 <!DOCTYPE html>

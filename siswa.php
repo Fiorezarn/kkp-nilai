@@ -4,10 +4,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_siswa'])) {
     exit();
 }
 
-// if (!isset($_SESSION['login'])) {
-//     header("location: login.php");
-//     die();
-// }
+session_start();
+
+if (!isset($_SESSION['login_user'])) {
+    header("location: login.php");
+    die();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -197,7 +200,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_siswa'])) {
         <ul>
             <li><a href="guru.php">Guru</a></li>
             <li><a class="active" href="siswa.php">Siswa</a></li>
-            <li><a class="logout">Logout</a></li>
+            <li><a href="logout.php">Logout</a></li>
         </ul>
     </nav>
 
