@@ -185,47 +185,58 @@ if (!$mapel) {
         #modalContent,
         #modalAddContent {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: 10% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 80%;
+            width: 90%;
             max-width: 500px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #modalContent h2,
+        #modalAddContent h2 {
+            margin-top: 0;
+        }
+
+        #modalContent label,
+        #modalAddContent label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        #modalContent input,
+        #modalContent select,
+        #modalAddContent input,
+        #modalAddContent select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #modalContent button,
+        #modalAddContent button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        #modalContent button[type="submit"],
+        #modalAddContent button[type="submit"] {
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        #modalContent button[type="button"],
+        #modalAddContent button[type="button"] {
+            background-color: #dc3545;
+            color: #fff;
         }
     </style>
-    <script>
-        $(document).ready(function() {
-            $('#nilaiTable').DataTable();
-
-            $('.editBtn').on('click', function() {
-                var idNilai = $(this).data('id');
-                var nilai = JSON.parse($(this).data('nilai'));
-                $('#editIdNilai').val(idNilai);
-                $('#editKd').val(nilai.kd);
-                $('#editTipe').val(nilai.tipe);
-                $('#editTugas1').val(nilai.tugas_1);
-                $('#editTugas2').val(nilai.tugas_2);
-                $('#editTugas3').val(nilai.tugas_3);
-                $('#editTugas4').val(nilai.tugas_4);
-                $('#editTugas5').val(nilai.tugas_5);
-                $('#editTugas6').val(nilai.tugas_6);
-                $('#editUh1').val(nilai.uh_1);
-                $('#editUh2').val(nilai.uh_2);
-                $('#editModal').show();
-            });
-
-            $('#closeModal').on('click', function() {
-                $('#editModal').hide();
-            });
-
-            $('.add-student').on('click', function() {
-                $('#addStudentModal').show();
-            });
-
-            $('#closeAddModal').on('click', function() {
-                $('#addStudentModal').hide();
-            });
-        });
-    </script>
 </head>
 
 <body>
@@ -271,7 +282,8 @@ if (!$mapel) {
                         <td><?php echo htmlspecialchars($row['uh_1']); ?></td>
                         <td><?php echo htmlspecialchars($row['uh_2']); ?></td>
                         <td>
-                            <button class="editBtn" data-id="<?php echo htmlspecialchars($row['id_nilai']); ?>" data-nilai='<?php echo json_encode($row); ?>'>Edit</button>
+                            <button class="editBtn" style="color: #fbbf24; cursor: pointer" data-id="<?php echo htmlspecialchars($row['id_nilai']); ?>" data-nilai='<?php echo json_encode($row, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>'> <i class="fas fa-edit edit"></i>
+                            </button>
                         </td>
                     </tr>
                 <?php endwhile; ?>
@@ -346,6 +358,41 @@ if (!$mapel) {
             </form>
         </div>
     </div>
+    </div>
 </body>
+<script>
+    $(document).ready(function() {
+        $('#nilaiTable').DataTable();
+
+        $('.editBtn').on('click', function() {
+            var idNilai = $(this).data('id');
+            var nilai = JSON.parse($(this).attr('data-nilai'));
+            $('#editIdNilai').val(idNilai);
+            $('#editKd').val(nilai.kd);
+            $('#editTipe').val(nilai.tipe);
+            $('#editTugas1').val(nilai.tugas_1);
+            $('#editTugas2').val(nilai.tugas_2);
+            $('#editTugas3').val(nilai.tugas_3);
+            $('#editTugas4').val(nilai.tugas_4);
+            $('#editTugas5').val(nilai.tugas_5);
+            $('#editTugas6').val(nilai.tugas_6);
+            $('#editUh1').val(nilai.uh_1);
+            $('#editUh2').val(nilai.uh_2);
+            $('#editModal').show();
+        });
+
+        $('#closeModal').on('click', function() {
+            $('#editModal').hide();
+        });
+
+        $('.add-student').on('click', function() {
+            $('#addStudentModal').show();
+        });
+
+        $('#closeAddModal').on('click', function() {
+            $('#addStudentModal').hide();
+        });
+    });
+</script>
 
 </html>
