@@ -237,7 +237,7 @@ if (!$mapel) {
         <label class="logo">KKP</label>
         <ul>
             <li><a class="active" href="welcome.php">Dashboard</a></li>
-            <li><a href="logout.php">Logout</a></li>
+            <li><a href="logout_guru.php">Logout</a></li>
         </ul>
     </nav>
     <div class="container">
@@ -266,26 +266,6 @@ if (!$mapel) {
                 </tr>
             </thead>
             <tbody>
-                <?php while ($row = $result->fetch_assoc()) : ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($row['nama_siswa']); ?></td>
-                        <td><?php echo htmlspecialchars($row['nis']); ?></td>
-                        <td><?php echo htmlspecialchars($row['kd']); ?></td>
-                        <td><?php echo htmlspecialchars($row['tipe']); ?></td>
-                        <td><?php echo htmlspecialchars($row['tugas_1']); ?></td>
-                        <td><?php echo htmlspecialchars($row['tugas_2']); ?></td>
-                        <td><?php echo htmlspecialchars($row['tugas_3']); ?></td>
-                        <td><?php echo htmlspecialchars($row['tugas_4']); ?></td>
-                        <td><?php echo htmlspecialchars($row['tugas_5']); ?></td>
-                        <td><?php echo htmlspecialchars($row['tugas_6']); ?></td>
-                        <td><?php echo htmlspecialchars($row['uh_1']); ?></td>
-                        <td><?php echo htmlspecialchars($row['uh_2']); ?></td>
-                        <td>
-                            <button class="editBtn" style="color: #fbbf24; cursor: pointer" data-id="<?php echo htmlspecialchars($row['id_nilai']); ?>" data-nilai='<?php echo json_encode($row, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>'> <i class="fas fa-edit edit"></i>
-                            </button>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
             </tbody>
         </table>
     </div>
@@ -294,8 +274,9 @@ if (!$mapel) {
     <div id="editModal">
         <div id="modalContent">
             <h2>Edit Nilai</h2>
-            <form id="editForm" method="POST" action="update_nilai.php">
+            <form id="editForm" method="POST" action="update.php">
                 <input type="hidden" name="id_nilai" id="editIdNilai">
+                <input type="hidden" name="id_siswa" id="editIdSiswa">
                 <input type="hidden" name="id_kelas" value="<?php echo htmlspecialchars($id_kelas); ?>">
                 <input type="hidden" name="id_mapel" value="<?php echo htmlspecialchars($id_mapel); ?>">
                 <label for="kd">KD:</label>
@@ -361,27 +342,94 @@ if (!$mapel) {
 </body>
 <script>
     $(document).ready(function() {
-        $('#nilaiTable').DataTable();
-
-        $('.editBtn').on('click', function() {
-            var idNilai = $(this).data('id');
-            var nilai = JSON.parse($(this).attr('data-nilai'));
-            $('#editIdNilai').val(idNilai);
-            $('#editKd').val(nilai.kd);
-            $('#editTipe').val(nilai.tipe);
-            $('#editTugas1').val(nilai.tugas_1);
-            $('#editTugas2').val(nilai.tugas_2);
-            $('#editTugas3').val(nilai.tugas_3);
-            $('#editTugas4').val(nilai.tugas_4);
-            $('#editTugas5').val(nilai.tugas_5);
-            $('#editTugas6').val(nilai.tugas_6);
-            $('#editUh1').val(nilai.uh_1);
-            $('#editUh2').val(nilai.uh_2);
-            $('#editModal').show();
+        var table = $('#nilaiTable').DataTable({
+            "ajax": "data_nilai.php?id_kelas=<?php echo $id_kelas; ?>&id_mapel=<?php echo $id_mapel; ?>&tipe=<?php echo $tipe; ?>&kd=<?php echo $kd; ?>",
+            "columns": [{
+                    "data": "nama_siswa"
+                },
+                {
+                    "data": "nis"
+                },
+                {
+                    "data": "kd"
+                },
+                {
+                    "data": "tipe"
+                },
+                {
+                    "data": "tugas_1"
+                },
+                {
+                    "data": "tugas_2"
+                },
+                {
+                    "data": "tugas_3"
+                },
+                {
+                    "data": "tugas_4"
+                },
+                {
+                    "data": "tugas_5"
+                },
+                {
+                    "data": "tugas_6"
+                },
+                {
+                    "data": "uh_1"
+                },
+                {
+                    "data": "uh_2"
+                },
+                {
+                    "data": null,
+                    "render": function(data, type, row) {
+                        return `<button class="editBtn" style="color: #fbbf24; cursor: pointer" data-id="${data.id_nilai}" data-nilai='${JSON.stringify(data)}'><i class="fas fa-edit edit"></i></button>`;
+                    }
+                }
+            ],
+            "drawCallback": function(settings) {
+                // Pengikatan event pada tombol edit dilakukan di sini
+                $('.editBtn').on('click', function() {
+                    var idNilai = $(this).data('id');
+                    var nilai = JSON.parse($(this).attr('data-nilai'));
+                    $('#editIdNilai').val(idNilai);
+                    $('#editKd').val(nilai.kd);
+                    $('#editTipe').val(nilai.tipe);
+                    $('#editTugas1').val(nilai.tugas_1);
+                    $('#editTugas2').val(nilai.tugas_2);
+                    $('#editTugas3').val(nilai.tugas_3);
+                    $('#editTugas4').val(nilai.tugas_4);
+                    $('#editTugas5').val(nilai.tugas_5);
+                    $('#editTugas6').val(nilai.tugas_6);
+                    $('#editUh1').val(nilai.uh_1);
+                    $('#editUh2').val(nilai.uh_2);
+                    $('#editModal').show();
+                });
+            }
         });
 
         $('#closeModal').on('click', function() {
             $('#editModal').hide();
+        });
+
+        $('#editForm').on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: 'update.php',
+                type: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status == 'success') {
+                        window.location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Error: ' + error);
+                }
+            });
         });
 
         $('.add-student').on('click', function() {
@@ -396,11 +444,11 @@ if (!$mapel) {
                 data: $(this).serialize(),
                 dataType: 'json',
                 success: function(response) {
-                    console.log(response);
                     if (response.status == 'success') {
+                        alert('Siswa berhasil ditambahkan');
                         window.location.reload();
                     } else {
-                        alert(response.message);
+                        alert('Error: ' + response.message);
                     }
                 },
                 error: function(xhr, status, error) {
