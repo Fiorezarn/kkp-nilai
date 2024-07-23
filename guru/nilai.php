@@ -388,6 +388,27 @@ if (!$mapel) {
             $('#addStudentModal').show();
         });
 
+        $('#addStudentForm').on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: 'tambah_nilai.php',
+                type: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    if (response.status == 'success') {
+                        window.location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Error: ' + error);
+                }
+            });
+        });
+
         $('#closeAddModal').on('click', function() {
             $('#addStudentModal').hide();
         });
