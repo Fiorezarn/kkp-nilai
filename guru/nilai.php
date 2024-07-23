@@ -63,13 +63,6 @@ if (!$mapel) {
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 20px;
-        }
-
         /* CSS untuk kartu informasi */
         .cards-container {
             display: flex;
@@ -240,11 +233,17 @@ if (!$mapel) {
 </head>
 
 <body>
+    <nav>
+        <label class="logo">KKP</label>
+        <ul>
+            <li><a class="active" href="welcome.php">Dashboard</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        </ul>
+    </nav>
     <div class="container">
         <div class="header">
             <h2>Nilai Siswa - <?php echo htmlspecialchars($kelas['nama_kelas']); ?> - <?php echo htmlspecialchars($mapel['nama_mapel']); ?></h2>
             <div>
-                <a href="logout_guru.php" class="logout">Logout</a>
                 <button class="add-student">Tambah Siswa</button>
             </div>
         </div>

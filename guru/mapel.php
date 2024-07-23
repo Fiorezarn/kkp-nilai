@@ -29,37 +29,37 @@ if (!$kelas) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Mapel - <?php echo htmlspecialchars($kelas['nama_kelas']); ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 20px;
-        }
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
+
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
+
         .header h2 {
             margin: 0;
         }
+
         .class-list {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
         }
+
         .card {
             background-color: #fff;
             border-radius: 8px;
@@ -69,27 +69,39 @@ if (!$kelas) {
             transition: transform 0.2s;
             text-decoration: none;
             color: black;
-            width: calc(33.333% - 20px); /* 3 cards per row with a 20px gap */
+            width: calc(33.333% - 20px);
+            /* 3 cards per row with a 20px gap */
         }
+
         .card:hover {
             transform: translateY(-5px);
         }
+
         .card h3 {
             margin: 0;
         }
+
         .card i {
             color: #007bff;
             margin-right: 10px;
         }
     </style>
 </head>
+
 <body>
+    <nav>
+        <label class="logo">KKP</label>
+        <ul>
+            <li><a class="active" href="welcome.php">Dashboard</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        </ul>
+    </nav>
     <div class="container">
         <div class="header">
             <h2>Daftar Mapel - <?php echo htmlspecialchars($kelas['nama_kelas']); ?></h2>
         </div>
         <div class="class-list">
-            <?php while($row = $result->fetch_assoc()) : ?>
+            <?php while ($row = $result->fetch_assoc()) : ?>
                 <a href="pilih_tipe.php?id_kelas=<?php echo $id_kelas; ?>&id_mapel=<?php echo $row['id_mapel']; ?>" class="card">
                     <h3><i class="fas fa-book"></i> <?php echo htmlspecialchars($row['nama_mapel']); ?></h3>
                 </a>
@@ -97,4 +109,5 @@ if (!$kelas) {
         </div>
     </div>
 </body>
+
 </html>

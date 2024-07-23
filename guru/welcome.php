@@ -135,6 +135,13 @@ $result = $conn->query($sql);
 </head>
 
 <body>
+    <nav>
+        <label class="logo">KKP</label>
+        <ul>
+            <li><a class="active" href="welcome.php">Dashboard</a></li>
+            <li><a href="logout_guru.php">Logout</a></li>
+        </ul>
+    </nav>
     <div class="container">
         <div class="cards-container">
             <div class="card">
@@ -166,7 +173,6 @@ $result = $conn->query($sql);
         <div class="container">
             <div class="header">
                 <h2>Welcome, <?php echo $_SESSION['login_guru']; ?></h2>
-                <a href="logout_guru.php" class="logout">Logout</a>
             </div>
             <div class="class-list">
                 <?php while ($row = $result->fetch_assoc()) : ?>

@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 21, 2024 at 05:48 AM
+-- Generation Time: Jul 23, 2024 at 12:22 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -125,65 +125,253 @@ INSERT INTO `kelas_mapel` (`id_kelas`, `id_mapel`) VALUES
 (1, 1),
 (1, 2),
 (1, 3),
+(1, 41),
+(1, 42),
+(1, 43),
+(1, 44),
+(1, 45),
+(1, 47),
+(1, 51),
+(1, 52),
+(1, 53),
+(1, 54),
+(1, 55),
+(1, 56),
+(1, 57),
 (2, 4),
 (2, 5),
 (2, 6),
 (2, 7),
 (2, 8),
+(2, 41),
+(2, 42),
+(2, 43),
+(2, 44),
+(2, 45),
+(2, 51),
+(2, 52),
+(2, 56),
+(2, 57),
 (3, 9),
 (3, 10),
 (3, 11),
+(3, 41),
+(3, 42),
+(3, 43),
+(3, 44),
+(3, 45),
+(3, 47),
+(3, 51),
+(3, 52),
+(3, 53),
+(3, 54),
+(3, 55),
+(3, 56),
+(3, 57),
 (4, 12),
 (4, 13),
 (4, 14),
+(4, 41),
+(4, 42),
+(4, 43),
+(4, 44),
+(4, 45),
+(4, 51),
+(4, 52),
+(4, 56),
+(4, 57),
 (5, 15),
 (5, 16),
 (5, 17),
+(5, 41),
+(5, 42),
+(5, 43),
+(5, 44),
+(5, 45),
+(5, 47),
+(5, 51),
+(5, 52),
+(5, 53),
+(5, 54),
+(5, 55),
+(5, 56),
+(5, 57),
 (6, 18),
 (6, 19),
 (6, 20),
+(6, 41),
+(6, 42),
+(6, 43),
+(6, 44),
+(6, 45),
+(6, 51),
+(6, 52),
+(6, 56),
+(6, 57),
 (7, 21),
 (7, 22),
 (7, 23),
+(7, 41),
+(7, 42),
+(7, 43),
+(7, 44),
+(7, 45),
+(7, 47),
+(7, 51),
+(7, 52),
+(7, 53),
+(7, 54),
+(7, 55),
+(7, 56),
+(7, 57),
 (8, 24),
 (8, 25),
 (8, 26),
+(8, 41),
+(8, 42),
+(8, 43),
+(8, 44),
+(8, 45),
+(8, 51),
+(8, 52),
+(8, 56),
+(8, 57),
 (9, 27),
 (9, 28),
 (9, 29),
+(9, 41),
+(9, 42),
+(9, 43),
+(9, 44),
+(9, 45),
+(9, 47),
+(9, 51),
+(9, 52),
+(9, 53),
+(9, 54),
+(9, 55),
+(9, 56),
+(9, 57),
 (10, 30),
 (10, 31),
 (10, 32),
+(10, 41),
+(10, 42),
+(10, 43),
+(10, 44),
+(10, 45),
+(10, 51),
+(10, 52),
+(10, 56),
+(10, 57),
 (11, 33),
 (11, 34),
 (11, 35),
+(11, 41),
+(11, 42),
+(11, 43),
+(11, 44),
+(11, 45),
+(11, 47),
+(11, 51),
+(11, 52),
+(11, 53),
+(11, 54),
+(11, 55),
+(11, 56),
+(11, 57),
 (12, 36),
 (12, 37),
 (12, 38),
+(12, 41),
+(12, 42),
+(12, 43),
+(12, 44),
+(12, 45),
+(12, 51),
+(12, 52),
+(12, 56),
+(12, 57),
 (13, 1),
 (13, 2),
 (13, 3),
+(13, 41),
+(13, 42),
+(13, 43),
+(13, 44),
+(13, 45),
+(13, 56),
+(13, 57),
 (14, 4),
 (14, 5),
 (14, 6),
+(14, 41),
+(14, 42),
+(14, 43),
+(14, 44),
+(14, 45),
+(14, 56),
+(14, 57),
 (15, 9),
 (15, 10),
 (15, 11),
+(15, 41),
+(15, 42),
+(15, 43),
+(15, 44),
+(15, 45),
+(15, 56),
+(15, 57),
 (16, 27),
 (16, 28),
 (16, 29),
+(16, 41),
+(16, 42),
+(16, 43),
+(16, 44),
+(16, 45),
+(16, 56),
+(16, 57),
 (17, 15),
 (17, 16),
 (17, 17),
+(17, 41),
+(17, 42),
+(17, 43),
+(17, 44),
+(17, 45),
+(17, 56),
+(17, 57),
 (18, 24),
 (18, 25),
 (18, 26),
+(18, 41),
+(18, 42),
+(18, 43),
+(18, 44),
+(18, 45),
+(18, 56),
+(18, 57),
 (19, 30),
 (19, 31),
 (19, 32),
+(19, 41),
+(19, 42),
+(19, 43),
+(19, 44),
+(19, 45),
+(19, 56),
+(19, 57),
 (20, 33),
 (20, 34),
-(20, 35);
+(20, 35),
+(20, 41),
+(20, 42),
+(20, 43),
+(20, 44),
+(20, 45),
+(20, 56),
+(20, 57);
 
 -- --------------------------------------------------------
 
@@ -250,7 +438,14 @@ INSERT INTO `mapel` (`id_mapel`, `nama_mapel`) VALUES
 (47, 'Seni Budaya'),
 (48, 'Muatan Lokal'),
 (49, 'IPA'),
-(50, 'IPS');
+(50, 'IPS'),
+(51, 'Penjas/Orkes'),
+(52, 'Sejarah'),
+(53, 'Muatan Lokal - Bahasa Jerman'),
+(54, 'Informatika'),
+(55, 'IPAS'),
+(56, 'Bahasa Jepang'),
+(57, 'Mata pelajaran khusus jurusan');
 
 -- --------------------------------------------------------
 
@@ -260,9 +455,10 @@ INSERT INTO `mapel` (`id_mapel`, `nama_mapel`) VALUES
 
 CREATE TABLE `nilai` (
   `id_nilai` int(11) NOT NULL,
-  `id_siswa` int(11) DEFAULT NULL,
-  `kd` varchar(10) DEFAULT NULL,
-  `type_kd` varchar(50) DEFAULT NULL,
+  `id_siswa` int(11) NOT NULL,
+  `id_mapel` int(11) NOT NULL,
+  `kd` int(11) NOT NULL,
+  `tipe` varchar(50) NOT NULL,
   `tugas_1` int(11) DEFAULT NULL,
   `tugas_2` int(11) DEFAULT NULL,
   `tugas_3` int(11) DEFAULT NULL,
@@ -277,8 +473,8 @@ CREATE TABLE `nilai` (
 -- Dumping data for table `nilai`
 --
 
-INSERT INTO `nilai` (`id_nilai`, `id_siswa`, `kd`, `type_kd`, `tugas_1`, `tugas_2`, `tugas_3`, `tugas_4`, `tugas_5`, `tugas_6`, `uh_1`, `uh_2`) VALUES
-(2, 1, '1', 'Pengetahuan', 80, 81, 82, NULL, 89, 78, 76, 45);
+INSERT INTO `nilai` (`id_nilai`, `id_siswa`, `id_mapel`, `kd`, `tipe`, `tugas_1`, `tugas_2`, `tugas_3`, `tugas_4`, `tugas_5`, `tugas_6`, `uh_1`, `uh_2`) VALUES
+(1, 5, 1, 1, 'pengetahuan', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -290,8 +486,7 @@ CREATE TABLE `nilai_siswa` (
   `id_nilai` int(11) NOT NULL,
   `id_siswa` int(11) NOT NULL,
   `id_mapel` int(11) NOT NULL,
-  `id_kelas` int(11) NOT NULL,
-  `nilai` int(11) DEFAULT NULL
+  `id_kelas` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -378,8 +573,7 @@ ALTER TABLE `mapel`
 -- Indexes for table `nilai`
 --
 ALTER TABLE `nilai`
-  ADD PRIMARY KEY (`id_nilai`),
-  ADD KEY `id_siswa` (`id_siswa`);
+  ADD PRIMARY KEY (`id_nilai`);
 
 --
 -- Indexes for table `siswa`
@@ -420,13 +614,13 @@ ALTER TABLE `kelas`
 -- AUTO_INCREMENT for table `mapel`
 --
 ALTER TABLE `mapel`
-  MODIFY `id_mapel` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id_mapel` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT for table `nilai`
 --
 ALTER TABLE `nilai`
-  MODIFY `id_nilai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_nilai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `siswa`
@@ -456,12 +650,6 @@ ALTER TABLE `kelas`
 ALTER TABLE `kelas_mapel`
   ADD CONSTRAINT `kelas_mapel_ibfk_1` FOREIGN KEY (`id_kelas`) REFERENCES `kelas` (`id_kelas`),
   ADD CONSTRAINT `kelas_mapel_ibfk_2` FOREIGN KEY (`id_mapel`) REFERENCES `mapel` (`id_mapel`);
-
---
--- Constraints for table `nilai`
---
-ALTER TABLE `nilai`
-  ADD CONSTRAINT `nilai_ibfk_1` FOREIGN KEY (`id_siswa`) REFERENCES `siswa` (`id_siswa`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
