@@ -255,7 +255,11 @@ if (!$mapel) {
             <h2>Nilai Siswa - <?php echo htmlspecialchars($kelas['nama_kelas']); ?> - <?php echo htmlspecialchars($mapel['nama_mapel']); ?></h2>
             <div>
                 <button class="add-student">Tambah Siswa</button>
-                <a href="export_excel.php?id_kelas=<?php echo $id_kelas; ?>&id_mapel=<?php echo $id_mapel; ?>&tipe=<?php echo $tipe; ?>&kd=<?php echo $kd; ?>" class="export-excel">Export</i></a>
+                    <?php
+                        if ($kd == 6) {
+                            echo '<a href="export_excel.php?id_kelas=' . $id_kelas . '&id_mapel=' . $id_mapel . '&tipe=' . $tipe . '&kd=' . $kd . '" class="export-excel">Export</a>';
+                        }
+                    ?>
             </div>
         </div>
         <table id="nilaiTable" class="display">
