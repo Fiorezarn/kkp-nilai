@@ -4,8 +4,9 @@ include('../koneksi.php');
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 $id_kelas = $_GET['id_kelas'];
 $id_mapel = $_GET['id_mapel'];
@@ -23,23 +24,16 @@ $sql = "
            COALESCE(n.uh_2, 0) as uh_2
     FROM nilai n
     JOIN siswa s ON n.id_siswa = s.id_siswa
-    WHERE s.id_kelas = $id_kelas AND n.id_mapel = $id_mapel AND (n.kd BETWEEN 1 AND 6)
+    WHERE s.id_kelas = $id_kelas AND n.id_mapel = $id_mapel
 ";
 $result = $conn->query($sql);
 if (!$result) {
     die("Query error (nilai siswa): " . $conn->error . " - Query: " . $sql);
 }
 
-// Tambahkan validasi untuk nilai KD yang belum terisi
-$kd_unfilled = false;
-
 // Mengumpulkan data dari database
 $data_siswa = [];
 while ($row = $result->fetch_assoc()) {
-    if ($row['tugas_6'] == 0) {
-        $kd_unfilled = true;
-    }
-    
     $id_siswa = $row['id_siswa'];
     if (!isset($data_siswa[$id_siswa])) {
         $data_siswa[$id_siswa] = [
@@ -48,7 +42,9 @@ while ($row = $result->fetch_assoc()) {
             'kd' => [
                 'pengetahuan' => [[], [], [], [], [], []], // KD 1-6 pengetahuan
                 'keterampilan' => [[], [], [], [], [], []], // KD 1-6 keterampilan
-            ]
+            ],
+            'pts' => 0,
+            'psaj' => 0
         ];
     }
 
@@ -68,33 +64,26 @@ while ($row = $result->fetch_assoc()) {
     }
 }
 
-if ($kd_unfilled) {
-    echo "<div id='modal' class='modal'>
-            <div class='modal-content'>
-                <span class='close'>&times;</span>
-                <p>Nilai KD belum terisi lengkap. Silakan lengkapi nilai KD terlebih dahulu.</p>
-            </div>
-          </div>
-          <style>
-            .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4); }
-            .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; }
-            .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
-            .close:hover, .close:focus { color: black; text-decoration: none; cursor: pointer; }
-          </style>
-          <script>
-            var modal = document.getElementById('modal');
-            var span = document.getElementsByClassName('close')[0];
-            modal.style.display = 'block';
-            span.onclick = function() {
-                modal.style.display = 'none';
-            }
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            }
-          </script>";
-    exit;
+// Ambil nilai PTS dan PSAJ dari tabel nilai_akhir
+$types = ['pts', 'psaj'];
+foreach ($types as $tipe) {
+    $sql_akhir = "
+        SELECT na.id_nilai_akhir as id_nilai, na.id_siswa, s.nama_siswa, s.nis, na.tipe, na.nilai as nilai_akhir
+        FROM nilai_akhir na
+        JOIN siswa s ON na.id_siswa = s.id_siswa
+        WHERE s.id_kelas = $id_kelas AND na.id_mapel = $id_mapel AND na.tipe = '$tipe'
+    ";
+    $result_akhir = $conn->query($sql_akhir);
+    if (!$result_akhir) {
+        die("Query error (nilai_akhir): " . $conn->error . " - Query: " . $sql_akhir);
+    }
+
+    while ($row_akhir = $result_akhir->fetch_assoc()) {
+        $id_siswa = $row_akhir['id_siswa'];
+        if (isset($data_siswa[$id_siswa])) {
+            $data_siswa[$id_siswa][$tipe] = $row_akhir['nilai_akhir'];
+        }
+    }
 }
 
 // Ambil nama kelas
@@ -142,91 +131,90 @@ $sheet->mergeCells('BO5:BV5')->setCellValue('BO5', 'KD 5 - Pengetahuan');
 $sheet->mergeCells('BW5:CD5')->setCellValue('BW5', 'KD 5 - Keterampilan');
 $sheet->mergeCells('CE5:CL5')->setCellValue('CE5', 'KD 6 - Pengetahuan');
 $sheet->mergeCells('CM5:CT5')->setCellValue('CM5', 'KD 6 - Keterampilan');
+$sheet->mergeCells('CU5:CU6')->setCellValue('CU5', 'PTS');
+$sheet->mergeCells('CV5:CV6')->setCellValue('CV5', 'PSAJ');
 
-$headerColumns = [
-    'C6' => 'Tugas 1', 'D6' => 'Tugas 2', 'E6' => 'Tugas 3', 'F6' => 'Tugas 4', 'G6' => 'Tugas 5', 'H6' => 'Tugas 6', 'I6' => 'UH 1', 'J6' => 'UH 2',
-    'K6' => 'Tugas 1', 'L6' => 'Tugas 2', 'M6' => 'Tugas 3', 'N6' => 'Tugas 4', 'O6' => 'Tugas 5', 'P6' => 'Tugas 6', 'Q6' => 'UH 1', 'R6' => 'UH 2',
-    'S6' => 'Tugas 1', 'T6' => 'Tugas 2', 'U6' => 'Tugas 3', 'V6' => 'Tugas 4', 'W6' => 'Tugas 5', 'X6' => 'Tugas 6', 'Y6' => 'UH 1', 'Z6' => 'UH 2',
-    'AA6' => 'Tugas 1', 'AB6' => 'Tugas 2', 'AC6' => 'Tugas 3', 'AD6' => 'Tugas 4', 'AE6' => 'Tugas 5', 'AF6' => 'Tugas 6', 'AG6' => 'UH 1', 'AH6' => 'UH 2',
-    'AI6' => 'Tugas 1', 'AJ6' => 'Tugas 2', 'AK6' => 'Tugas 3', 'AL6' => 'Tugas 4', 'AM6' => 'Tugas 5', 'AN6' => 'Tugas 6', 'AO6' => 'UH 1', 'AP6' => 'UH 2',
-    'AQ6' => 'Tugas 1', 'AR6' => 'Tugas 2', 'AS6' => 'Tugas 3', 'AT6' => 'Tugas 4', 'AU6' => 'Tugas 5', 'AV6' => 'Tugas 6', 'AW6' => 'UH 1', 'AX6' => 'UH 2',
-    'AY6' => 'Tugas 1', 'AZ6' => 'Tugas 2', 'BA6' => 'Tugas 3', 'BB6' => 'Tugas 4', 'BC6' => 'Tugas 5', 'BD6' => 'Tugas 6', 'BE6' => 'UH 1', 'BF6' => 'UH 2',
-    'BG6' => 'Tugas 1', 'BH6' => 'Tugas 2', 'BI6' => 'Tugas 3', 'BJ6' => 'Tugas 4', 'BK6' => 'Tugas 5', 'BL6' => 'Tugas 6', 'BM6' => 'UH 1', 'BN6' => 'UH 2',
-    'BO6' => 'Tugas 1', 'BP6' => 'Tugas 2', 'BQ6' => 'Tugas 3', 'BR6' => 'Tugas 4', 'BS6' => 'Tugas 5', 'BT6' => 'Tugas 6', 'BU6' => 'UH 1', 'BV6' => 'UH 2',
-    'BW6' => 'Tugas 1', 'BX6' => 'Tugas 2', 'BY6' => 'Tugas 3', 'BZ6' => 'Tugas 4', 'CA6' => 'Tugas 5', 'CB6' => 'Tugas 6', 'CC6' => 'UH 1', 'CD6' => 'UH 2',
-    'CE6' => 'Tugas 1', 'CF6' => 'Tugas 2', 'CG6' => 'Tugas 3', 'CH6' => 'Tugas 4', 'CI6' => 'Tugas 5', 'CJ6' => 'Tugas 6', 'CK6' => 'UH 1', 'CL6' => 'UH 2',
-    'CM6' => 'Tugas 1', 'CN6' => 'Tugas 2', 'CO6' => 'Tugas 3', 'CP6' => 'Tugas 4', 'CQ6' => 'Tugas 5', 'CR6' => 'Tugas 6', 'CS6' => 'UH 1', 'CT6' => 'UH 2'
-];
+// Buat header baris 6
+$header = ['Tugas 1', 'Tugas 2', 'Tugas 3', 'Tugas 4', 'Tugas 5', 'Tugas 6', 'UH 1', 'UH 2'];
 
-foreach ($headerColumns as $cell => $value) {
-    $sheet->setCellValue($cell, $value);
+// Buat header baris 6
+$columnIndex = 'C'; // Mulai dari kolom 'C'
+foreach (range(1, 6) as $kd) {
+    foreach (['pengetahuan', 'keterampilan'] as $type) {
+        foreach ($header as $h) {
+            $sheet->setCellValue($columnIndex . '6', $h);
+            $columnIndex++;
+        }
+    }
 }
 
-// Penerapan gaya untuk header
-$styleArrayHeader = [
-    'font' => [
-        'bold' => true,
-        'color' => ['argb' => 'FFFFFFFF'],
-    ],
+// Set warna background untuk header
+$sheet->getStyle('A5:CV6')->applyFromArray([
     'fill' => [
         'fillType' => Fill::FILL_SOLID,
-        'startColor' => ['argb' => 'FF4CAF50'],
+        'startColor' => [
+            'argb' => Color::COLOR_YELLOW,
+        ],
     ],
-    'alignment' => [
-        'horizontal' => Alignment::HORIZONTAL_CENTER,
-        'vertical' => Alignment::VERTICAL_CENTER,
-    ],
+]);
+
+// Set border untuk header
+$styleArray = [
     'borders' => [
         'allBorders' => [
-            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+            'borderStyle' => Border::BORDER_THIN,
+            'color' => ['argb' => '00000000'],
         ],
     ],
 ];
+$sheet->getStyle('A5:CV6')->applyFromArray($styleArray);
 
-// Terapkan gaya ke header
-$sheet->getStyle('A5:CT6')->applyFromArray($styleArrayHeader);
+// Isi data siswa
+$row_number = 7;
+foreach ($data_siswa as $data) {
+    $sheet->setCellValue('A' . $row_number, $data['nama_siswa']);
+    $sheet->setCellValue('B' . $row_number, $data['nis']);
 
-// Isi data ke spreadsheet
-$rowNumber = 7; // Dimulai dari baris ke-7
-foreach ($data_siswa as $siswa) {
-    $sheet->setCellValue('A' . $rowNumber, $siswa['nama_siswa']);
-    $sheet->setCellValue('B' . $rowNumber, $siswa['nis']);
-
-    $columns = ['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-        'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU',
-        'AV', 'AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP',
-        'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ', 'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'CI', 'CJ', 'CK',
-        'CL', 'CM', 'CN', 'CO', 'CP', 'CQ', 'CR', 'CS', 'CT'];
-
-    $columnIndex = 0;
-    for ($kd = 0; $kd < 6; $kd++) {
-        // Pengetahuan
-        foreach ($siswa['kd']['pengetahuan'][$kd] as $nilai) {
-            $sheet->setCellValue($columns[$columnIndex++] . $rowNumber, $nilai);
-        }
-
-        // Keterampilan
-        foreach ($siswa['kd']['keterampilan'][$kd] as $nilai) {
-            $sheet->setCellValue($columns[$columnIndex++] . $rowNumber, $nilai);
+    $col = 'C';
+    foreach ($data['kd']['pengetahuan'] as $kd) {
+        foreach ($kd as $nilai) {
+            $sheet->setCellValue($col . $row_number, $nilai);
+            $col++;
         }
     }
 
-    $rowNumber++;
+    foreach ($data['kd']['keterampilan'] as $kd) {
+        foreach ($kd as $nilai) {
+            $sheet->setCellValue($col . $row_number, $nilai);
+            $col++;
+        }
+    }
+
+    $sheet->setCellValue('CU' . $row_number, $data['pts']);
+    $sheet->setCellValue('CV' . $row_number, $data['psaj']);
+
+    // Set border untuk setiap baris data
+    $sheet->getStyle('A' . $row_number . ':CV' . $row_number)->applyFromArray($styleArray);
+
+    // Set auto size untuk tinggi baris agar sesuai dengan panjang data
+    $sheet->getRowDimension($row_number)->setRowHeight(-1);
+
+    $row_number++;
 }
 
-// Atur lebar kolom agar otomatis menyesuaikan isi
-foreach (range('A', 'CT') as $columnID) {
+// Set auto size untuk kolom
+foreach (range('A', 'CV') as $columnID) {
     $sheet->getColumnDimension($columnID)->setAutoSize(true);
 }
 
-// Atur nama file dan download
-$filename = 'nilai_siswa_' . $kelas['nama_kelas'] . '_' . $mapel['nama_mapel'] . '.xlsx';
+// Menyimpan file Excel
+$writer = new Xlsx($spreadsheet);
+$filename = 'data_nilai_siswa.xlsx';
+$writer->save($filename);
 
-header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+// Menyajikan file untuk diunduh
+header('Content-Type: application/vnd.ms-excel');
 header('Content-Disposition: attachment;filename="' . $filename . '"');
 header('Cache-Control: max-age=0');
-
-$writer = new Xlsx($spreadsheet);
 $writer->save('php://output');
-exit;
-?>
+exit();

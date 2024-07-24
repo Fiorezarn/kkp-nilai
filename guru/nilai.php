@@ -5,23 +5,37 @@ session_start();
 $id_kelas = $_GET['id_kelas'];
 $id_mapel = $_GET['id_mapel'];
 $tipe = $_GET['tipe'];
-$kd = $_GET['kd'];
+$kd = isset($_GET['kd']) ? $_GET['kd'] : null;
 
-// Ambil data nilai siswa dari database berdasarkan kelas, mapel, tipe, dan kd
-$sql = "
-    SELECT n.id_nilai, n.id_siswa, s.nama_siswa, s.nis, n.kd, n.tipe,
-           COALESCE(n.tugas_1, 'Belum Ada') as tugas_1,
-           COALESCE(n.tugas_2, 'Belum Ada') as tugas_2,
-           COALESCE(n.tugas_3, 'Belum Ada') as tugas_3,
-           COALESCE(n.tugas_4, 'Belum Ada') as tugas_4,
-           COALESCE(n.tugas_5, 'Belum Ada') as tugas_5,
-           COALESCE(n.tugas_6, 'Belum Ada') as tugas_6,
-           COALESCE(n.uh_1, 'Belum Ada') as uh_1,
-           COALESCE(n.uh_2, 'Belum Ada') as uh_2
-    FROM nilai n
-    JOIN siswa s ON n.id_siswa = s.id_siswa
-    WHERE s.id_kelas = $id_kelas AND n.id_mapel = $id_mapel AND n.tipe = '$tipe' AND n.kd = $kd
-";
+// Buat query SQL berdasarkan tipe
+if ($tipe == 'pengetahuan' || $tipe == 'keterampilan') {
+    $sql = "
+        SELECT n.id_nilai, n.id_siswa, s.nama_siswa, s.nis, n.kd, n.tipe,
+               COALESCE(n.tugas_1, 'Belum Ada') as tugas_1,
+               COALESCE(n.tugas_2, 'Belum Ada') as tugas_2,
+               COALESCE(n.tugas_3, 'Belum Ada') as tugas_3,
+               COALESCE(n.tugas_4, 'Belum Ada') as tugas_4,
+               COALESCE(n.tugas_5, 'Belum Ada') as tugas_5,
+               COALESCE(n.tugas_6, 'Belum Ada') as tugas_6,
+               COALESCE(n.uh_1, 'Belum Ada') as uh_1,
+               COALESCE(n.uh_2, 'Belum Ada') as uh_2
+        FROM nilai n
+        JOIN siswa s ON n.id_siswa = s.id_siswa
+        WHERE s.id_kelas = $id_kelas AND n.id_mapel = $id_mapel AND n.tipe = '$tipe'
+    ";
+} else {
+    $sql = "
+        SELECT na.id_nilai_akhir as id_nilai, na.id_siswa, s.nama_siswa, s.nis, na.tipe, na.nilai as nilai_akhir
+        FROM nilai_akhir na
+        JOIN siswa s ON na.id_siswa = s.id_siswa
+        WHERE s.id_kelas = $id_kelas AND na.id_mapel = $id_mapel AND na.tipe = '$tipe'
+    ";
+}
+
+if ($kd !== null && ($tipe == 'pengetahuan' || $tipe == 'keterampilan')) {
+    $sql .= " AND n.kd = $kd";
+}
+
 $result = $conn->query($sql);
 if (!$result) {
     die("Query error (nilai siswa): " . $conn->error . " - Query: " . $sql);
@@ -163,7 +177,8 @@ if (!$mapel) {
         }
 
         #editModal,
-        #addStudentModal {
+        #addStudentModal,
+        #addStudentModalSpecial {
             display: none;
             position: fixed;
             z-index: 1;
@@ -176,7 +191,8 @@ if (!$mapel) {
         }
 
         #modalContent,
-        #modalAddContent {
+        #modalAddContent,
+        #modalAddContentSpecial {
             background-color: #fefefe;
             margin: 10% auto;
             padding: 20px;
@@ -188,12 +204,14 @@ if (!$mapel) {
         }
 
         #modalContent h2,
-        #modalAddContent h2 {
+        #modalAddContent h2,
+        #modalAddContentSpecial h2 {
             margin-top: 0;
         }
 
         #modalContent label,
-        #modalAddContent label {
+        #modalAddContent label,
+        #modalAddContentSpecial label {
             display: block;
             margin: 10px 0 5px;
         }
@@ -201,7 +219,9 @@ if (!$mapel) {
         #modalContent input,
         #modalContent select,
         #modalAddContent input,
-        #modalAddContent select {
+        #modalAddContent select,
+        #modalAddContentSpecial input,
+        #modalAddContentSpecial select {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -210,7 +230,8 @@ if (!$mapel) {
         }
 
         #modalContent button,
-        #modalAddContent button {
+        #modalAddContent button,
+        #modalAddContentSpecial button {
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
@@ -219,13 +240,15 @@ if (!$mapel) {
         }
 
         #modalContent button[type="submit"],
-        #modalAddContent button[type="submit"] {
+        #modalAddContent button[type="submit"],
+        #modalAddContentSpecial button[type="submit"] {
             background-color: #28a745;
             color: #fff;
         }
 
         #modalContent button[type="button"],
-        #modalAddContent button[type="button"] {
+        #modalAddContent button[type="button"],
+        #modalAddContentSpecial button[type="button"] {
             background-color: #dc3545;
             color: #fff;
         }
@@ -243,23 +266,13 @@ if (!$mapel) {
 </head>
 
 <body>
-    <nav>
-        <label class="logo">KKP</label>
-        <ul>
-            <li><a class="active" href="welcome.php">Dashboard</a></li>
-            <li><a href="logout_guru.php">Logout</a></li>
-        </ul>
-    </nav>
     <div class="container">
         <div class="header">
             <h2>Nilai Siswa - <?php echo htmlspecialchars($kelas['nama_kelas']); ?> - <?php echo htmlspecialchars($mapel['nama_mapel']); ?></h2>
             <div>
-                <button class="add-student">Tambah Siswa</button>
-                    <?php
-                        if ($kd == 6) {
-                            echo '<a href="export_excel.php?id_kelas=' . $id_kelas . '&id_mapel=' . $id_mapel . '&tipe=' . $tipe . '&kd=' . $kd . '" class="export-excel">Export</a>';
-                        }
-                    ?>
+                <a href="export_excel.php?id_kelas=<?php echo $id_kelas; ?>&id_mapel=<?php echo $id_mapel; ?>&tipe=<?php echo $tipe; ?>&kd=<?php echo $kd; ?>" class="export-excel">Export to Excel</a>
+                <a class="add-student">Tambah Siswa</a>
+                <a class="logout" href="../logout.php">Logout</a>
             </div>
         </div>
         <table id="nilaiTable" class="display">
@@ -267,69 +280,112 @@ if (!$mapel) {
                 <tr>
                     <th>Nama Siswa</th>
                     <th>NIS</th>
-                    <th>KD</th>
-                    <th>Tipe</th>
-                    <th>Tugas 1</th>
-                    <th>Tugas 2</th>
-                    <th>Tugas 3</th>
-                    <th>Tugas 4</th>
-                    <th>Tugas 5</th>
-                    <th>Tugas 6</th>
-                    <th>UH 1</th>
-                    <th>UH 2</th>
-                    <th>Action</th>
+                    <?php if ($tipe == 'pengetahuan' || $tipe == 'keterampilan') { ?>
+                        <th>Tipe</th>
+                        <th>Tugas 1</th>
+                        <th>Tugas 2</th>
+                        <th>Tugas 3</th>
+                        <th>Tugas 4</th>
+                        <th>Tugas 5</th>
+                        <th>Tugas 6</th>
+                        <th>UH 1</th>
+                        <th>UH 2</th>
+                    <?php } else { ?>
+                        <th>Tipe</th>
+                        <th>Nilai Akhir</th>
+                    <?php } ?>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
+                <?php while ($row = $result->fetch_assoc()) { ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($row['nama_siswa']); ?></td>
+                        <td><?php echo htmlspecialchars($row['nis']); ?></td>
+                        <?php if ($tipe == 'pengetahuan' || $tipe == 'keterampilan') { ?>
+                            <td><?php echo htmlspecialchars($row['tipe']); ?></td>
+                            <td><?php echo htmlspecialchars($row['tugas_1']); ?></td>
+                            <td><?php echo htmlspecialchars($row['tugas_2']); ?></td>
+                            <td><?php echo htmlspecialchars($row['tugas_3']); ?></td>
+                            <td><?php echo htmlspecialchars($row['tugas_4']); ?></td>
+                            <td><?php echo htmlspecialchars($row['tugas_5']); ?></td>
+                            <td><?php echo htmlspecialchars($row['tugas_6']); ?></td>
+                            <td><?php echo htmlspecialchars($row['uh_1']); ?></td>
+                            <td><?php echo htmlspecialchars($row['uh_2']); ?></td>
+                        <?php } else { ?>
+                            <td><?php echo htmlspecialchars($row['tipe']); ?></td>
+                            <td><?php echo htmlspecialchars($row['nilai_akhir']); ?></td>
+                        <?php } ?>
+                        <td>
+                            <button class="edit-btn" data-id="<?php echo $row['id_nilai']; ?>" data-tipe="<?php echo $row['tipe']; ?>" data-id_siswa="<?php echo $row['id_siswa']; ?>" data-nama_siswa="<?php echo $row['nama_siswa']; ?>" <?php if ($tipe == 'pengetahuan' || $tipe == 'keterampilan') { ?> data-tugas_1="<?php echo $row['tugas_1']; ?>" data-tugas_2="<?php echo $row['tugas_2']; ?>" data-tugas_3="<?php echo $row['tugas_3']; ?>" data-tugas_4="<?php echo $row['tugas_4']; ?>" data-tugas_5="<?php echo $row['tugas_5']; ?>" data-tugas_6="<?php echo $row['tugas_6']; ?>" data-uh_1="<?php echo $row['uh_1']; ?>" data-uh_2="<?php echo $row['uh_2']; ?>" <?php } else { ?> data-nilai_akhir="<?php echo $row['nilai_akhir']; ?>" <?php } ?>>Edit</button>
+                        </td>
+                    </tr>
+                <?php } ?>
             </tbody>
         </table>
     </div>
 
-    <!-- Modal Edit -->
+    <!-- Modal Edit Nilai -->
     <div id="editModal">
         <div id="modalContent">
             <h2>Edit Nilai</h2>
             <form id="editForm" method="POST" action="update.php">
-                <input type="hidden" name="id_nilai" id="editIdNilai">
-                <input type="hidden" name="id_siswa" id="editIdSiswa">
+                <input type="hidden" name="id_nilai" id="edit_id_nilai">
                 <input type="hidden" name="id_kelas" value="<?php echo htmlspecialchars($id_kelas); ?>">
                 <input type="hidden" name="id_mapel" value="<?php echo htmlspecialchars($id_mapel); ?>">
-                <label for="kd">KD:</label>
-                <input type="number" name="kd" id="editKd" required>
-                <label for="tipe">Tipe:</label>
-                <select name="tipe" id="editTipe" required>
-                    <option value="pengetahuan">Pengetahuan</option>
-                    <option value="keterampilan">Keterampilan</option>
+                <input type="hidden" name="tipe" id="edit_tipe">
+                <input type="hidden" name="kd" value="<?php echo htmlspecialchars($kd); ?>">
+                <label for="edit_id_siswa">Nama Siswa:</label>
+                <select name="id_siswa" id="edit_id_siswa" required>
+                    <?php
+                    $sql_siswa = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_kelas = $id_kelas";
+                    $result_siswa = $conn->query($sql_siswa);
+                    while ($siswa = $result_siswa->fetch_assoc()) {
+                        echo '<option value="' . htmlspecialchars($siswa['id_siswa']) . '">' . htmlspecialchars($siswa['nama_siswa']) . '</option>';
+                    }
+                    ?>
                 </select>
-                <label for="tugas_1">Tugas 1:</label>
-                <input type="number" name="tugas_1" id="editTugas1">
-                <label for="tugas_2">Tugas 2:</label>
-                <input type="number" name="tugas_2" id="editTugas2">
-                <label for="tugas_3">Tugas 3:</label>
-                <input type="number" name="tugas_3" id="editTugas3">
-                <label for="tugas_4">Tugas 4:</label>
-                <input type="number" name="tugas_4" id="editTugas4">
-                <label for="tugas_5">Tugas 5:</label>
-                <input type="number" name="tugas_5" id="editTugas5">
-                <label for="tugas_6">Tugas 6:</label>
-                <input type="number" name="tugas_6" id="editTugas6">
-                <label for="uh_1">UH 1:</label>
-                <input type="number" name="uh_1" id="editUh1">
-                <label for="uh_2">UH 2:</label>
-                <input type="number" name="uh_2" id="editUh2">
-                <button type="submit">Save</button>
+                <div id="editNilaiFields">
+                    <!-- Fields for Pengetahuan and Keterampilan -->
+                    <div class="nilai-pengetahuan-keterampilan">
+                        <label for="edit_tugas_1">Tugas 1:</label>
+                        <input type="number" name="tugas_1" id="edit_tugas_1">
+                        <label for="edit_tugas_2">Tugas 2:</label>
+                        <input type="number" name="tugas_2" id="edit_tugas_2">
+                        <label for="edit_tugas_3">Tugas 3:</label>
+                        <input type="number" name="tugas_3" id="edit_tugas_3">
+                        <label for="edit_tugas_4">Tugas 4:</label>
+                        <input type="number" name="tugas_4" id="edit_tugas_4">
+                        <label for="edit_tugas_5">Tugas 5:</label>
+                        <input type="number" name="tugas_5" id="edit_tugas_5">
+                        <label for="edit_tugas_6">Tugas 6:</label>
+                        <input type="number" name="tugas_6" id="edit_tugas_6">
+                        <label for="edit_uh_1">UH 1:</label>
+                        <input type="number" name="uh_1" id="edit_uh_1">
+                        <label for="edit_uh_2">UH 2:</label>
+                        <input type="number" name="uh_2" id="edit_uh_2">
+                    </div>
+                    <!-- Fields for PTS and PSAJ -->
+                    <div class="nilai-pts-psaj">
+                        <label for="edit_nilai_akhir">Nilai Akhir:</label>
+                        <input type="number" name="nilai" id="edit_nilai_akhir">
+                    </div>
+                </div>
+                <button type="submit">Simpan</button>
                 <button type="button" id="closeModal">Cancel</button>
             </form>
         </div>
     </div>
 
-    <!-- Modal Tambah Siswa ke Tabel Nilai -->
+
+    <!-- Modal Tambah Siswa untuk tipe pengetahuan dan keterampilan -->
     <div id="addStudentModal">
         <div id="modalAddContent">
-            <h2>Tambah Siswa ke Tabel Nilai</h2>
-            <form id="addStudentForm" method="POST" action="tambah_nilai.php">
+            <h2>Tambah Siswa ke Tabel Nilai (Pengetahuan / Keterampilan)</h2>
+            <form id="addStudentForm" method="POST">
                 <input type="hidden" name="id_kelas" value="<?php echo htmlspecialchars($id_kelas); ?>">
                 <input type="hidden" name="id_mapel" value="<?php echo htmlspecialchars($id_mapel); ?>">
+                <input type="hidden" name="kd" value="<?php echo htmlspecialchars($kd); ?>">
                 <label for="id_siswa">Nama Siswa:</label>
                 <select name="id_siswa" id="id_siswa" required>
                     <?php
@@ -341,141 +397,187 @@ if (!$mapel) {
                     }
                     ?>
                 </select>
-                <label for="kd">KD:</label>
-                <input type="number" name="kd" id="kd" required>
                 <label for="tipe">Tipe:</label>
                 <select name="tipe" id="tipe" required>
                     <option value="pengetahuan">Pengetahuan</option>
                     <option value="keterampilan">Keterampilan</option>
                 </select>
+                <div id="nilaiFields">
+                    <label for="tugas_1">Tugas 1:</label>
+                    <input type="number" name="tugas_1" id="tugas_1">
+                    <label for="tugas_2">Tugas 2:</label>
+                    <input type="number" name="tugas_2" id="tugas_2">
+                    <label for="tugas_3">Tugas 3:</label>
+                    <input type="number" name="tugas_3" id="tugas_3">
+                    <label for="tugas_4">Tugas 4:</label>
+                    <input type="number" name="tugas_4" id="tugas_4">
+                    <label for="tugas_5">Tugas 5:</label>
+                    <input type="number" name="tugas_5" id="tugas_5">
+                    <label for="tugas_6">Tugas 6:</label>
+                    <input type="number" name="tugas_6" id="tugas_6">
+                    <label for="uh_1">UH 1:</label>
+                    <input type="number" name="uh_1" id="uh_1">
+                    <label for="uh_2">UH 2:</label>
+                    <input type="number" name="uh_2" id="uh_2">
+                </div>
                 <button type="submit">Tambah</button>
                 <button type="button" id="closeAddModal">Cancel</button>
             </form>
         </div>
     </div>
+
+    <!-- Modal Tambah Siswa untuk tipe PTS dan PSAJ -->
+    <div id="addStudentModalSpecial">
+        <div id="modalAddContentSpecial">
+            <h2>Tambah Siswa ke Tabel Nilai (PTS / PSAJ)</h2>
+            <form id="addStudentFormSpecial" method="POST">
+                <input type="hidden" name="id_kelas" value="<?php echo htmlspecialchars($id_kelas); ?>">
+                <input type="hidden" name="id_mapel" value="<?php echo htmlspecialchars($id_mapel); ?>">
+                <input type="hidden" name="kd" value="<?php echo htmlspecialchars($kd); ?>">
+                <label for="id_siswa_special">Nama Siswa:</label>
+                <select name="id_siswa" id="id_siswa_special" required>
+                    <?php
+                    // Ambil daftar siswa berdasarkan id_kelas
+                    $sql_siswa = "SELECT id_siswa, nama_siswa FROM siswa WHERE id_kelas = $id_kelas";
+                    $result_siswa = $conn->query($sql_siswa);
+                    while ($siswa = $result_siswa->fetch_assoc()) {
+                        echo '<option value="' . htmlspecialchars($siswa['id_siswa']) . '">' . htmlspecialchars($siswa['nama_siswa']) . '</option>';
+                    }
+                    ?>
+                </select>
+                <label for="tipe_special">Tipe:</label>
+                <select name="tipe" id="tipe_special" required>
+                    <option value="pts">PTS</option>
+                    <option value="psaj">PSAJ</option>
+                </select>
+                <div id="nilaiFieldsSpecial">
+                    <label for="nilai">Nilai Akhir:</label>
+                    <input type="number" name="nilai" id="nilai">
+                </div>
+                <button type="submit">Tambah</button>
+                <button type="button" id="closeAddModalSpecial">Cancel</button>
+            </form>
+        </div>
     </div>
-</body>
-<script>
-    $(document).ready(function() {
-        var table = $('#nilaiTable').DataTable({
-            "ajax": "data_nilai.php?id_kelas=<?php echo $id_kelas; ?>&id_mapel=<?php echo $id_mapel; ?>&tipe=<?php echo $tipe; ?>&kd=<?php echo $kd; ?>",
-            "columns": [{
-                    "data": "nama_siswa"
-                },
-                {
-                    "data": "nis"
-                },
-                {
-                    "data": "kd"
-                },
-                {
-                    "data": "tipe"
-                },
-                {
-                    "data": "tugas_1"
-                },
-                {
-                    "data": "tugas_2"
-                },
-                {
-                    "data": "tugas_3"
-                },
-                {
-                    "data": "tugas_4"
-                },
-                {
-                    "data": "tugas_5"
-                },
-                {
-                    "data": "tugas_6"
-                },
-                {
-                    "data": "uh_1"
-                },
-                {
-                    "data": "uh_2"
-                },
-                {
-                    "data": null,
-                    "render": function(data, type, row) {
-                        return `<button class="editBtn" style="color: #fbbf24; cursor: pointer" data-id="${data.id_nilai}" data-nilai='${JSON.stringify(data)}'><i class="fas fa-edit edit"></i></button>`;
-                    }
+
+    <script>
+        $(document).ready(function() {
+            $('#nilaiTable').DataTable();
+
+            // Fungsi untuk membuka modal edit
+            $('.edit-btn').click(function() {
+                var id_nilai_akhir = $(this).data('id_nilai_akhir');
+                var id_siswa = $(this).data('id_siswa');
+                var nama_siswa = $(this).data('nama_siswa');
+                var tipe = $(this).data('tipe');
+
+                console.log(id_nilai_akhir, id_siswa, nama_siswa, tipe);
+                $('#edit_id_nilai').val(id_nilai_akhir);
+                $('#edit_id_siswa').val(id_siswa);
+                $('#edit_tipe').val(tipe);
+
+                // Penyesuaian field untuk Pengetahuan/Keterampilan dan PTS/PSAJ
+                if (tipe === 'pengetahuan' || tipe === 'keterampilan') {
+                    $('#editNilaiFields .nilai-pengetahuan-keterampilan').show();
+                    $('#editNilaiFields .nilai-pts-psaj').hide();
+                    $('#edit_tugas_1').val($(this).data('tugas_1'));
+                    $('#edit_tugas_2').val($(this).data('tugas_2'));
+                    $('#edit_tugas_3').val($(this).data('tugas_3'));
+                    $('#edit_tugas_4').val($(this).data('tugas_4'));
+                    $('#edit_tugas_5').val($(this).data('tugas_5'));
+                    $('#edit_tugas_6').val($(this).data('tugas_6'));
+                    $('#edit_uh_1').val($(this).data('uh_1'));
+                    $('#edit_uh_2').val($(this).data('uh_2'));
+                } else {
+                    $('#editNilaiFields .nilai-pengetahuan-keterampilan').hide();
+                    $('#editNilaiFields .nilai-pts-psaj').show();
+                    $('#edit_nilai_akhir').val($(this).data('nilai_akhir'));
                 }
-            ],
-            "drawCallback": function(settings) {
-                // Pengikatan event pada tombol edit dilakukan di sini
-                $('.editBtn').on('click', function() {
-                    var idNilai = $(this).data('id');
-                    var nilai = JSON.parse($(this).attr('data-nilai'));
-                    $('#editIdNilai').val(idNilai);
-                    $('#editKd').val(nilai.kd);
-                    $('#editTipe').val(nilai.tipe);
-                    $('#editTugas1').val(nilai.tugas_1);
-                    $('#editTugas2').val(nilai.tugas_2);
-                    $('#editTugas3').val(nilai.tugas_3);
-                    $('#editTugas4').val(nilai.tugas_4);
-                    $('#editTugas5').val(nilai.tugas_5);
-                    $('#editTugas6').val(nilai.tugas_6);
-                    $('#editUh1').val(nilai.uh_1);
-                    $('#editUh2').val(nilai.uh_2);
-                    $('#editModal').show();
+
+                $('#editModal').show();
+            });
+
+
+            // Fungsi untuk membuka modal tambah siswa
+            $('.add-student').click(function() {
+                if ('<?php echo $tipe; ?>' === 'pengetahuan' || '<?php echo $tipe; ?>' === 'keterampilan') {
+                    $('#addStudentModal').show();
+                } else {
+                    $('#addStudentModalSpecial').show();
+                }
+            });
+
+            // Fungsi untuk menutup modal edit
+            $('#closeModal').click(function() {
+                $('#editModal').hide();
+            });
+
+            // Fungsi untuk menutup modal tambah siswa
+            $('#closeAddModal').click(function() {
+                $('#addStudentModal').hide();
+            });
+
+            $('#closeAddModalSpecial').click(function() {
+                $('#addStudentModalSpecial').hide();
+            });
+
+            // AJAX untuk edit nilai
+            $('#editForm').submit(function(event) {
+                event.preventDefault();
+                var actionUrl = $('#edit_tipe').val() === 'pengetahuan' || $('#edit_tipe').val() === 'keterampilan' ? 'update.php?action=updateNilai' : 'update.php?action=updateNilaiAkhir';
+                $.ajax({
+                    url: actionUrl,
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        console.log(response);
+                        $('#editModal').hide();
+                        // $('#nilaiTable').DataTable().ajax.reload();
+                        // alert('Nilai berhasil diperbarui');
+                        // location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Terjadi kesalahan: ' + error);
+                        console.log(xhr.responseText);
+                    }
                 });
-            }
-        });
+            });
 
-        $('#closeModal').on('click', function() {
-            $('#editModal').hide();
-        });
-
-        $('#editForm').on('submit', function(e) {
-            e.preventDefault();
-            $.ajax({
-                url: 'update.php',
-                type: 'POST',
-                data: $(this).serialize(),
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status == 'success') {
-                        window.location.reload();
-                    } else {
-                        alert('Error: ' + response.message);
+            // AJAX untuk tambah nilai pengetahuan/keterampilan
+            $('#addStudentForm').submit(function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: 'tambah_nilai.php?action=insertNilai',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        alert('Nilai berhasil ditambahkan!');
+                        location.reload(); // Untuk me-reload halaman setelah menambah data
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Terjadi kesalahan: ' + error);
                     }
-                },
-                error: function(xhr, status, error) {
-                    alert('Error: ' + error);
-                }
+                });
+            });
+
+            // AJAX untuk tambah nilai PTS/PSAJ
+            $('#addStudentFormSpecial').submit(function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: 'tambah_nilai.php?action=insertNilaiAkhir',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        alert('Nilai berhasil ditambahkan!');
+                        location.reload(); // Untuk me-reload halaman setelah menambah data
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Terjadi kesalahan: ' + error);
+                    }
+                });
             });
         });
-
-        $('.add-student').on('click', function() {
-            $('#addStudentModal').show();
-        });
-
-        $('#addStudentForm').on('submit', function(e) {
-            e.preventDefault();
-            $.ajax({
-                url: 'tambah_nilai.php',
-                type: 'POST',
-                data: $(this).serialize(),
-                dataType: 'json',
-                success: function(response) {
-                    if (response.status == 'success') {
-                        alert('Siswa berhasil ditambahkan');
-                        window.location.reload();
-                    } else {
-                        alert('Error: ' + response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    alert('Error: ' + error);
-                }
-            });
-        });
-
-        $('#closeAddModal').on('click', function() {
-            $('#addStudentModal').hide();
-        });
-    });
-</script>
+    </script>
+</body>
 
 </html>
