@@ -229,6 +229,16 @@ if (!$mapel) {
             background-color: #dc3545;
             color: #fff;
         }
+
+        .export-excel {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
     </style>
 </head>
 
@@ -245,7 +255,7 @@ if (!$mapel) {
             <h2>Nilai Siswa - <?php echo htmlspecialchars($kelas['nama_kelas']); ?> - <?php echo htmlspecialchars($mapel['nama_mapel']); ?></h2>
             <div>
                 <button class="add-student">Tambah Siswa</button>
-                <a href="export_excel.php?id_kelas=<?php echo $id_kelas; ?>&id_mapel=<?php echo $id_mapel; ?>&tipe=<?php echo $tipe; ?>&kd=<?php echo $kd; ?>" class="export-excel">Download Excel</a>
+                <a href="export_excel.php?id_kelas=<?php echo $id_kelas; ?>&id_mapel=<?php echo $id_mapel; ?>&tipe=<?php echo $tipe; ?>&kd=<?php echo $kd; ?>" class="export-excel">Export</i></a>
             </div>
         </div>
         <table id="nilaiTable" class="display">
