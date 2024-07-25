@@ -7,9 +7,10 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 if ($action == "insertSiswa") {
     $nama_siswa = trim($_POST['nama_siswa']);
+    $nis = trim($_POST['nis']);
     $id_kelas = trim($_POST['id_kelas']);
     $id_jurusan = trim($_POST['id_jurusan']);
-    $sql = "INSERT INTO `siswa` (`id_siswa`, `nama_siswa`, `id_kelas`, `id_jurusan`) VALUES (NULL, '$nama_siswa', '$id_kelas', '$id_jurusan');";
+    $sql = "INSERT INTO `siswa` (`id_siswa`, `nama_siswa`, `nis`, `id_kelas`, `id_jurusan`) VALUES (NULL, '$nama_siswa', '$nis', '$id_kelas', '$id_jurusan');";
     $result = mysqli_query($conn, $sql);
 
     if ($result) {
@@ -22,7 +23,7 @@ if ($action == "insertSiswa") {
 }
 
 if ($action == "showCustomer") {
-    $sql = "SELECT s.id_siswa,s.nama_siswa, k.nama_kelas, j.nama_jurusan FROM siswa s
+    $sql = "SELECT s.id_siswa,s.nama_siswa, s.nis, k.nama_kelas, j.nama_jurusan FROM siswa s
             LEFT JOIN kelas k ON k.id_kelas = s.id_kelas
             LEFT JOIN jurusan j ON j.id_jurusan = s.id_jurusan";
     $result = $conn->query($sql);
@@ -55,9 +56,10 @@ if ($action == "listJurusan") {
 if ($action == "updateSiswa") {
     $id_siswa = trim($_POST['id_siswa']);
     $nama_siswa = trim($_POST['nama_siswa']);
+    $nis = trim($_POST['nis']);
     $id_kelas = trim($_POST['id_kelas']);
     $id_jurusan = trim($_POST['id_jurusan']);
-    $sql = "UPDATE siswa SET nama_siswa = '$nama_siswa', id_kelas = '$id_kelas', id_jurusan = '$id_jurusan' WHERE id_siswa = $id_siswa";
+    $sql = "UPDATE siswa SET nama_siswa = '$nama_siswa', nis = '$nis', id_kelas = '$id_kelas', id_jurusan = '$id_jurusan' WHERE id_siswa = $id_siswa";
     $result = mysqli_query($conn, $sql);
 
     if ($result) {

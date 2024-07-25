@@ -266,13 +266,23 @@ if (!$mapel) {
 </head>
 
 <body>
+    <nav>
+        <input type="checkbox" id="check">
+        <label for="check" class="checkbtn">
+            <i class="fas fa-bars"></i>
+        </label>
+        <label class="logo">KKP</label>
+        <ul>
+            <li><a class="active" href="welcome.php">Dashboard</a></li>
+            <li><a href="logout_guru.php">Logout</a></li>
+        </ul>
+    </nav>
     <div class="container">
         <div class="header">
             <h2>Nilai Siswa - <?php echo htmlspecialchars($kelas['nama_kelas']); ?> - <?php echo htmlspecialchars($mapel['nama_mapel']); ?></h2>
             <div>
-                <a href="export_excel.php?id_kelas=<?php echo $id_kelas; ?>&id_mapel=<?php echo $id_mapel; ?>&tipe=<?php echo $tipe; ?>&kd=<?php echo $kd; ?>" class="export-excel">Export to Excel</a>
+                <a href="export_excel.php?id_kelas=<?php echo $id_kelas; ?>&id_mapel=<?php echo $id_mapel; ?>&tipe=<?php echo $tipe; ?>&kd=<?php echo $kd; ?>" class="export-excel">EXCEL</a>
                 <a class="add-student">Tambah Siswa</a>
-                <a class="logout" href="../logout.php">Logout</a>
             </div>
         </div>
         <table id="nilaiTable" class="display">

@@ -23,14 +23,17 @@ if (!$mapel) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Jurusan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <title>Pilih Tipe - <?php echo htmlspecialchars($mapel['nama_mapel']); ?></title>
     <style>
-        body {
+        /* body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
             margin: 0;
             padding: 20px;
-        }
+        } */
 
         .container {
             max-width: 800px;
@@ -56,6 +59,17 @@ if (!$mapel) {
 </head>
 
 <body>
+    <nav>
+        <input type="checkbox" id="check">
+        <label for="check" class="checkbtn">
+            <i class="fas fa-bars"></i>
+        </label>
+        <label class="logo">KKP</label>
+        <ul>
+            <li><a class="active" href="welcome.php">Dashboard</a></li>
+            <li><a href="logout_guru.php">Logout</a></li>
+        </ul>
+    </nav>
     <div class="container">
         <h2>Pilih Tipe - <?php echo htmlspecialchars($mapel['nama_mapel']); ?></h2>
         <div class="card">

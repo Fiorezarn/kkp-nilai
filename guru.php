@@ -197,6 +197,10 @@ if (!isset($_SESSION['login_user'])) {
 
 <body>
     <nav>
+        <input type="checkbox" id="check">
+        <label for="check" class="checkbtn">
+            <i class="fas fa-bars"></i>
+        </label>
         <label class="logo">KKP</label>
         <ul>
             <li><a class="active" href="guru.php">Guru</a></li>

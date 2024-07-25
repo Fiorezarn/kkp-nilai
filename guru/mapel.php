@@ -90,6 +90,10 @@ if (!$kelas) {
 
 <body>
     <nav>
+        <input type="checkbox" id="check">
+        <label for="check" class="checkbtn">
+            <i class="fas fa-bars"></i>
+        </label>
         <label class="logo">KKP</label>
         <ul>
             <li><a class="active" href="welcome.php">Dashboard</a></li>

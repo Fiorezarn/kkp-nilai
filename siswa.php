@@ -195,7 +195,12 @@ if (!isset($_SESSION['login_user'])) {
 </head>
 
 <body>
+
     <nav>
+        <input type="checkbox" id="check">
+        <label for="check" class="checkbtn">
+            <i class="fas fa-bars"></i>
+        </label>
         <label class="logo">KKP</label>
         <ul>
             <li><a href="guru.php">Guru</a></li>
@@ -203,6 +208,8 @@ if (!isset($_SESSION['login_user'])) {
             <li><a href="logout.php">Logout</a></li>
         </ul>
     </nav>
+
+
 
     <div class="container">
         <h2 class="header-table">Data Siswa</h2>
@@ -214,6 +221,7 @@ if (!isset($_SESSION['login_user'])) {
                 <thead>
                     <tr>
                         <th>Nama</th>
+                        <th>NIS</th>
                         <th>Kelas</th>
                         <th>Jurusan</th>
                         <th>Actions</th>
@@ -241,6 +249,8 @@ if (!isset($_SESSION['login_user'])) {
             <form action="siswa.php" method="post">
                 <label for="nama_siswa">Nama Siswa:</label>
                 <input type="text" id="nama_siswa" name="nama_siswa" required>
+                <label for="nis">NIS:</label>
+                <input type="text" id="nis" name="nis" required>
                 <label for="kelas">Kelas:</label>
                 <select id="kelas" name="kelas" required>
                     <option value="1">Kelas 10</option>
@@ -263,6 +273,8 @@ if (!isset($_SESSION['login_user'])) {
                 <input type="hidden" id="edit_id_siswa" name="id_siswa">
                 <label for="edit_nama_siswa">Nama Siswa:</label>
                 <input type="text" id="edit_nama_siswa" name="nama_siswa" required>
+                <label for="edit_nis">NIS:</label>
+                <input type="text" id="edit_nis" name="nis" required>
                 <label for="edit_kelas">Kelas:</label>
                 <select id="edit_kelas" name="kelas" required>
                     <option value="1">Kelas 10</option>
@@ -297,6 +309,9 @@ if (!isset($_SESSION['login_user'])) {
                 },
                 columns: [{
                         data: 'nama_siswa'
+                    },
+                    {
+                        data: 'nis'
                     },
                     {
                         data: 'nama_kelas'
@@ -376,6 +391,7 @@ if (!isset($_SESSION['login_user'])) {
                 var id = data.id_siswa;
                 $('#edit_id_siswa').val(id);
                 $('#edit_nama_siswa').val(data.nama_siswa);
+                $('#edit_nis').val(data.nis);
                 $('#edit_kelas').val(data.nama_kelas);
                 $('#edit_jurusan').val(data.nama_jurusan);
                 editModal.style.display = 'block';
@@ -450,6 +466,7 @@ if (!isset($_SESSION['login_user'])) {
                 event.preventDefault();
                 var formData = new FormData();
                 formData.append('nama_siswa', $("#nama_siswa").val());
+                formData.append('nis', $("#nis").val());
                 formData.append('id_kelas', $("#kelas").val());
                 formData.append('id_jurusan', $("#jurusan").val());
                 $.ajax({
@@ -472,6 +489,7 @@ if (!isset($_SESSION['login_user'])) {
                 event.preventDefault();
                 var formData = new FormData(this);
                 formData.append('nama_siswa', $("#edit_nama_siswa").val());
+                formData.append('nis', $("#edit_nis").val());
                 formData.append('id_kelas', $("#edit_kelas").val());
                 formData.append('id_jurusan', $("#edit_jurusan").val());
                 $.ajax({
