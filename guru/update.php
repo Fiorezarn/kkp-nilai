@@ -31,7 +31,7 @@ if ($action == 'updateNilai') {
 }
 
 if ($action == 'updateNilaiAkhir') {
-    $id_nilai_akhir = $_POST['id_nilai_akhir'];
+    $id_nilai_akhir = $_POST['id_nilai'];
     $nilai = isset($_POST['nilai']) ? $_POST['nilai'] : null;
 
     $sql_update = "UPDATE nilai_akhir SET nilai = ? WHERE id_nilai_akhir = ?";
@@ -47,3 +47,4 @@ if ($action == 'updateNilaiAkhir') {
     $stmt->close();
     $conn->close();
 }
+?>

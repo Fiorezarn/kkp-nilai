@@ -262,6 +262,19 @@ if (!$mapel) {
             cursor: pointer;
             text-decoration: none;
         }
+        .edit-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .edit-btn:hover {
+        background-color: #0056b3;
+    }
     </style>
 </head>
 
@@ -476,13 +489,12 @@ if (!$mapel) {
 
             // Fungsi untuk membuka modal edit
             $('.edit-btn').click(function() {
-                var id_nilai_akhir = $(this).data('id_nilai_akhir');
+                var id_nilai = $(this).data('id');
                 var id_siswa = $(this).data('id_siswa');
                 var nama_siswa = $(this).data('nama_siswa');
                 var tipe = $(this).data('tipe');
 
-                console.log(id_nilai_akhir, id_siswa, nama_siswa, tipe);
-                $('#edit_id_nilai').val(id_nilai_akhir);
+                $('#edit_id_nilai').val(id_nilai);
                 $('#edit_id_siswa').val(id_siswa);
                 $('#edit_tipe').val(tipe);
 
@@ -506,7 +518,6 @@ if (!$mapel) {
 
                 $('#editModal').show();
             });
-
 
             // Fungsi untuk membuka modal tambah siswa
             $('.add-student').click(function() {
@@ -542,9 +553,8 @@ if (!$mapel) {
                     success: function(response) {
                         console.log(response);
                         $('#editModal').hide();
-                        // $('#nilaiTable').DataTable().ajax.reload();
-                        // alert('Nilai berhasil diperbarui');
-                        // location.reload();
+                        alert('Nilai berhasil diperbarui');
+                        location.reload();
                     },
                     error: function(xhr, status, error) {
                         alert('Terjadi kesalahan: ' + error);
