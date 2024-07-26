@@ -401,14 +401,15 @@ if (!$mapel) {
     </div>
 
 
-    <!-- Modal Tambah Siswa untuk tipe pengetahuan dan keterampilan -->
+    <!-- Modal Tambah Siswa -->
     <div id="addStudentModal">
         <div id="modalAddContent">
-            <h2>Tambah Siswa ke Tabel Nilai (Pengetahuan / Keterampilan)</h2>
+            <h2>Tambah Siswa ke Tabel Nilai</h2>
             <form id="addStudentForm" method="POST">
                 <input type="hidden" name="id_kelas" value="<?php echo htmlspecialchars($id_kelas); ?>">
                 <input type="hidden" name="id_mapel" value="<?php echo htmlspecialchars($id_mapel); ?>">
                 <input type="hidden" name="kd" value="<?php echo htmlspecialchars($kd); ?>">
+                <input type="hidden" name="tipe" value="<?php echo htmlspecialchars($tipe); ?>">
                 <label for="id_siswa">Nama Siswa:</label>
                 <select name="id_siswa" id="id_siswa" required>
                     <?php
@@ -420,43 +421,21 @@ if (!$mapel) {
                     }
                     ?>
                 </select>
-                <label for="tipe">Tipe:</label>
-                <select name="tipe" id="tipe" required>
-                    <option value="pengetahuan">Pengetahuan</option>
-                    <option value="keterampilan">Keterampilan</option>
-                </select>
-                <div id="nilaiFields">
-                    <label for="tugas_1">Tugas 1:</label>
-                    <input type="number" name="tugas_1" id="tugas_1">
-                    <label for="tugas_2">Tugas 2:</label>
-                    <input type="number" name="tugas_2" id="tugas_2">
-                    <label for="tugas_3">Tugas 3:</label>
-                    <input type="number" name="tugas_3" id="tugas_3">
-                    <label for="tugas_4">Tugas 4:</label>
-                    <input type="number" name="tugas_4" id="tugas_4">
-                    <label for="tugas_5">Tugas 5:</label>
-                    <input type="number" name="tugas_5" id="tugas_5">
-                    <label for="tugas_6">Tugas 6:</label>
-                    <input type="number" name="tugas_6" id="tugas_6">
-                    <label for="uh_1">UH 1:</label>
-                    <input type="number" name="uh_1" id="uh_1">
-                    <label for="uh_2">UH 2:</label>
-                    <input type="number" name="uh_2" id="uh_2">
-                </div>
                 <button type="submit">Tambah</button>
                 <button type="button" id="closeAddModal">Cancel</button>
             </form>
         </div>
     </div>
 
+
     <!-- Modal Tambah Siswa untuk tipe PTS dan PSAJ -->
     <div id="addStudentModalSpecial">
         <div id="modalAddContentSpecial">
-            <h2>Tambah Siswa ke Tabel Nilai (PTS / PSAJ)</h2>
+            <h2>Tambah Siswa ke Tabel Nilai <?php echo htmlspecialchars($tipe); ?></h2>
             <form id="addStudentFormSpecial" method="POST">
                 <input type="hidden" name="id_kelas" value="<?php echo htmlspecialchars($id_kelas); ?>">
                 <input type="hidden" name="id_mapel" value="<?php echo htmlspecialchars($id_mapel); ?>">
-                <input type="hidden" name="kd" value="<?php echo htmlspecialchars($kd); ?>">
+                <input type="hidden" name="tipe" value="<?php echo htmlspecialchars($tipe); ?>">
                 <label for="id_siswa_special">Nama Siswa:</label>
                 <select name="id_siswa" id="id_siswa_special" required>
                     <?php
@@ -468,13 +447,8 @@ if (!$mapel) {
                     }
                     ?>
                 </select>
-                <label for="tipe_special">Tipe:</label>
-                <select name="tipe" id="tipe_special" required>
-                    <option value="pts">PTS</option>
-                    <option value="psaj">PSAJ</option>
-                </select>
                 <div id="nilaiFieldsSpecial">
-                    <label for="nilai">Nilai Akhir:</label>
+                    <label for="nilai">Nilai <?php echo htmlspecialchars($tipe); ?>:</label>
                     <input type="number" name="nilai" id="nilai">
                 </div>
                 <button type="submit">Tambah</button>
@@ -482,6 +456,7 @@ if (!$mapel) {
             </form>
         </div>
     </div>
+
 
     <script>
         $(document).ready(function() {
