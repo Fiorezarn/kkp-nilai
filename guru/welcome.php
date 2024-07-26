@@ -7,6 +7,31 @@ if (!isset($_SESSION['login_guru'])) {
     die();
 }
 
+// Query untuk menghitung jumlah guru
+$sql_guru = "SELECT COUNT(*) AS total_guru FROM guru";
+$result_guru = $conn->query($sql_guru);
+$row_guru = $result_guru->fetch_assoc();
+$total_guru = $row_guru['total_guru'];
+
+// Query untuk menghitung jumlah jurusan
+$sql_jurusan = "SELECT COUNT(*) AS total_jurusan FROM jurusan";
+$result_jurusan = $conn->query($sql_jurusan);
+$row_jurusan = $result_jurusan->fetch_assoc();
+$total_jurusan = $row_jurusan['total_jurusan'];
+
+// Query untuk menghitung jumlah mata pelajaran (mapel)
+$sql_mapel = "SELECT COUNT(*) AS total_mapel FROM mapel";
+$result_mapel = $conn->query($sql_mapel);
+$row_mapel = $result_mapel->fetch_assoc();
+$total_mapel = $row_mapel['total_mapel'];
+
+// Query untuk menghitung jumlah siswa
+$sql_siswa = "SELECT COUNT(*) AS total_siswa FROM siswa";
+$result_siswa = $conn->query($sql_siswa);
+$row_siswa = $result_siswa->fetch_assoc();
+$total_siswa = $row_siswa['total_siswa'];
+
+
 $sql = "SELECT * FROM jurusan";
 $result = $conn->query($sql);
 ?>
@@ -150,27 +175,27 @@ $result = $conn->query($sql);
         <div class="cards-container">
             <div class="card">
                 <i class="fas fa-chalkboard-teacher"></i>
-                <h3>15</h3>
+                <h3><?php echo $total_guru; ?></h3>
                 <p>Guru</p>
             </div>
             <div class="card">
                 <i class="fas fa-chalkboard"></i>
-                <h3>10</h3>
+                <h3><?php echo $total_jurusan; ?></h3>
                 <p>Jurusan</p>
             </div>
             <div class="card">
                 <i class="fas fa-school"></i>
-                <h3>20</h3>
+                <h3>3</h3>
                 <p>Kelas</p>
             </div>
             <div class="card">
                 <i class="fas fa-book"></i>
-                <h3>30</h3>
+                <h3><?php echo $total_mapel; ?></h3>
                 <p>Mapel</p>
             </div>
             <div class="card">
                 <i class="fas fa-user-graduate"></i>
-                <h3>400</h3>
+                <h3><?php echo $total_siswa; ?></h3>
                 <p>Siswa</p>
             </div>
         </div>
