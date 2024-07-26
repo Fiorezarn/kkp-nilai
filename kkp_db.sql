@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 23, 2024 at 12:22 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Waktu pembuatan: 26 Jul 2024 pada 18.56
+-- Versi server: 10.4.32-MariaDB
+-- Versi PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `guru`
+-- Struktur dari tabel `guru`
 --
 
 CREATE TABLE `guru` (
@@ -35,17 +35,17 @@ CREATE TABLE `guru` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `guru`
+-- Dumping data untuk tabel `guru`
 --
 
 INSERT INTO `guru` (`id_guru`, `nama_guru`, `nip`, `no_telp`) VALUES
 (1, 'Adian Ali', '802131231123', '0923213123123'),
-(2, 'Sugiono', '13123313', '1231231');
+(2, 'Sugiono', '123', '1231231');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jurusan`
+-- Struktur dari tabel `jurusan`
 --
 
 CREATE TABLE `jurusan` (
@@ -54,7 +54,7 @@ CREATE TABLE `jurusan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `jurusan`
+-- Dumping data untuk tabel `jurusan`
 --
 
 INSERT INTO `jurusan` (`id_jurusan`, `nama_jurusan`) VALUES
@@ -70,7 +70,7 @@ INSERT INTO `jurusan` (`id_jurusan`, `nama_jurusan`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kelas`
+-- Struktur dari tabel `kelas`
 --
 
 CREATE TABLE `kelas` (
@@ -81,7 +81,7 @@ CREATE TABLE `kelas` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `kelas`
+-- Dumping data untuk tabel `kelas`
 --
 
 INSERT INTO `kelas` (`id_kelas`, `nama_kelas`, `tingkatan`, `id_jurusan`) VALUES
@@ -109,7 +109,7 @@ INSERT INTO `kelas` (`id_kelas`, `nama_kelas`, `tingkatan`, `id_jurusan`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `kelas_mapel`
+-- Struktur dari tabel `kelas_mapel`
 --
 
 CREATE TABLE `kelas_mapel` (
@@ -118,7 +118,7 @@ CREATE TABLE `kelas_mapel` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `kelas_mapel`
+-- Dumping data untuk tabel `kelas_mapel`
 --
 
 INSERT INTO `kelas_mapel` (`id_kelas`, `id_mapel`) VALUES
@@ -376,7 +376,7 @@ INSERT INTO `kelas_mapel` (`id_kelas`, `id_mapel`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `mapel`
+-- Struktur dari tabel `mapel`
 --
 
 CREATE TABLE `mapel` (
@@ -385,7 +385,7 @@ CREATE TABLE `mapel` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `mapel`
+-- Dumping data untuk tabel `mapel`
 --
 
 INSERT INTO `mapel` (`id_mapel`, `nama_mapel`) VALUES
@@ -450,7 +450,7 @@ INSERT INTO `mapel` (`id_mapel`, `nama_mapel`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `nilai`
+-- Struktur dari tabel `nilai`
 --
 
 CREATE TABLE `nilai` (
@@ -470,29 +470,74 @@ CREATE TABLE `nilai` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `nilai`
+-- Dumping data untuk tabel `nilai`
 --
 
 INSERT INTO `nilai` (`id_nilai`, `id_siswa`, `id_mapel`, `kd`, `tipe`, `tugas_1`, `tugas_2`, `tugas_3`, `tugas_4`, `tugas_5`, `tugas_6`, `uh_1`, `uh_2`) VALUES
-(1, 5, 1, 1, 'pengetahuan', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(1, 1, 1, 1, 'pengetahuan', 85, 88, 90, 87, 0, 89, 92, 91),
+(2, 1, 1, 1, 'keterampilan', 80, 82, 85, 81, 84, 83, 86, 87),
+(3, 1, 1, 2, 'pengetahuan', 78, 79, 80, 77, 76, 75, 81, 80),
+(4, 1, 1, 2, 'keterampilan', 75, 74, 73, 76, 77, 78, 79, 80),
+(5, 1, 1, 3, 'pengetahuan', 88, 87, 86, 89, 90, 91, 92, 93),
+(6, 1, 1, 3, 'keterampilan', 82, 83, 84, 85, 86, 87, 88, 89),
+(7, 1, 1, 4, 'pengetahuan', 91, 90, 89, 92, 93, 94, 95, 96),
+(8, 1, 1, 4, 'keterampilan', 85, 84, 83, 86, 87, 88, 89, 90),
+(9, 1, 1, 5, 'pengetahuan', 0, 0, 0, 0, 0, 0, 0, 0),
+(10, 1, 1, 5, 'keterampilan', 74, 73, 72, 75, 76, 77, 78, 79),
+(11, 1, 1, 6, 'pengetahuan', 90, 91, 92, 93, 94, 95, 96, 97),
+(12, 1, 1, 6, 'keterampilan', 84, 85, 86, 87, 88, 89, 90, 91),
+(13, 5, 1, 1, 'pengetahuan', 70, 72, 74, 76, 78, 80, 82, 84),
+(14, 5, 1, 1, 'keterampilan', 65, 67, 69, 71, 73, 75, 77, 79),
+(15, 5, 1, 2, 'pengetahuan', 75, 77, 79, 81, 83, 85, 87, 89),
+(16, 5, 1, 2, 'keterampilan', 70, 72, 74, 76, 78, 80, 82, 84),
+(17, 5, 1, 3, 'pengetahuan', 68, 70, 72, 74, 76, 78, 80, 82),
+(18, 5, 1, 3, 'keterampilan', 63, 65, 67, 69, 71, 73, 75, 77),
+(19, 5, 1, 4, 'pengetahuan', 72, 74, 76, 78, 80, 82, 84, 86),
+(20, 5, 1, 4, 'keterampilan', 67, 69, 71, 73, 75, 77, 79, 81),
+(21, 5, 1, 5, 'pengetahuan', 74, 76, 78, 80, 82, 84, 86, 88),
+(22, 5, 1, 5, 'keterampilan', 69, 71, 73, 75, 77, 79, 81, 83),
+(23, 5, 1, 6, 'pengetahuan', 76, 78, 80, 82, 84, 86, 88, 90),
+(24, 5, 1, 6, 'keterampilan', 71, 73, 75, 77, 79, 81, 83, 85),
+(25, 6, 1, 1, 'pengetahuan', 80, 82, 84, 86, 88, 90, 92, 99),
+(26, 6, 1, 1, 'keterampilan', 75, 77, 79, 81, 83, 85, 87, 89),
+(27, 6, 1, 2, 'pengetahuan', 85, 87, 89, 91, 93, 95, 97, 99),
+(28, 6, 1, 2, 'keterampilan', 80, 82, 84, 86, 88, 90, 92, 94),
+(29, 6, 1, 3, 'pengetahuan', 78, 80, 82, 84, 86, 88, 90, 92),
+(30, 6, 1, 3, 'keterampilan', 73, 75, 77, 79, 81, 83, 85, 87),
+(31, 6, 1, 4, 'pengetahuan', 82, 84, 86, 88, 90, 92, 94, 96),
+(32, 6, 1, 4, 'keterampilan', 77, 79, 81, 83, 85, 87, 89, 91),
+(33, 6, 1, 5, 'pengetahuan', 84, 86, 88, 90, 92, 94, 96, 98),
+(34, 6, 1, 5, 'keterampilan', 79, 81, 83, 85, 87, 89, 91, 93),
+(35, 6, 1, 6, 'pengetahuan', 86, 88, 90, 92, 94, 96, 98, 100),
+(36, 6, 1, 6, 'keterampilan', 81, 83, 85, 87, 89, 91, 93, 95);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `nilai_siswa`
+-- Struktur dari tabel `nilai_akhir`
 --
 
-CREATE TABLE `nilai_siswa` (
-  `id_nilai` int(11) NOT NULL,
+CREATE TABLE `nilai_akhir` (
+  `id_nilai_akhir` int(11) NOT NULL,
   `id_siswa` int(11) NOT NULL,
+  `id_kelas` int(11) NOT NULL,
   `id_mapel` int(11) NOT NULL,
-  `id_kelas` int(11) NOT NULL
+  `tipe` varchar(255) NOT NULL,
+  `nilai` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `nilai_akhir`
+--
+
+INSERT INTO `nilai_akhir` (`id_nilai_akhir`, `id_siswa`, `id_kelas`, `id_mapel`, `tipe`, `nilai`) VALUES
+(9, 1, 1, 1, 'pts', 89),
+(10, 1, 1, 1, 'psaj', 90);
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `siswa`
+-- Struktur dari tabel `siswa`
 --
 
 CREATE TABLE `siswa` (
@@ -504,18 +549,20 @@ CREATE TABLE `siswa` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `siswa`
+-- Dumping data untuk tabel `siswa`
 --
 
 INSERT INTO `siswa` (`id_siswa`, `nama_siswa`, `nis`, `id_kelas`, `id_jurusan`) VALUES
-(1, 'Sony Wakwa111', 0, 0, 0),
-(5, 'sadasdasd', 12132131, 1, 1),
-(6, 'ajaw ngentot', 0, 3, 5);
+(1, 'Muhammad Rizqi', 1813251001, 1, 1),
+(5, 'Abdusalam Alkailani', 1813252002, 1, 1),
+(6, 'Suwandi Liang', 1213251001, 1, 1),
+(9, 'Jesaya', 1413251001, 1, 1),
+(10, 'Jessica Kumala Wongso', 1243251001, 2, 1);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Struktur dari tabel `users`
 --
 
 CREATE TABLE `users` (
@@ -527,7 +574,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `users`
+-- Dumping data untuk tabel `users`
 --
 
 INSERT INTO `users` (`id`, `nama`, `username`, `password`, `reg_date`) VALUES
@@ -538,114 +585,126 @@ INSERT INTO `users` (`id`, `nama`, `username`, `password`, `reg_date`) VALUES
 --
 
 --
--- Indexes for table `guru`
+-- Indeks untuk tabel `guru`
 --
 ALTER TABLE `guru`
   ADD PRIMARY KEY (`id_guru`);
 
 --
--- Indexes for table `jurusan`
+-- Indeks untuk tabel `jurusan`
 --
 ALTER TABLE `jurusan`
   ADD PRIMARY KEY (`id_jurusan`);
 
 --
--- Indexes for table `kelas`
+-- Indeks untuk tabel `kelas`
 --
 ALTER TABLE `kelas`
   ADD PRIMARY KEY (`id_kelas`),
   ADD KEY `id_jurusan` (`id_jurusan`);
 
 --
--- Indexes for table `kelas_mapel`
+-- Indeks untuk tabel `kelas_mapel`
 --
 ALTER TABLE `kelas_mapel`
   ADD PRIMARY KEY (`id_kelas`,`id_mapel`),
   ADD KEY `id_mapel` (`id_mapel`);
 
 --
--- Indexes for table `mapel`
+-- Indeks untuk tabel `mapel`
 --
 ALTER TABLE `mapel`
   ADD PRIMARY KEY (`id_mapel`);
 
 --
--- Indexes for table `nilai`
+-- Indeks untuk tabel `nilai`
 --
 ALTER TABLE `nilai`
   ADD PRIMARY KEY (`id_nilai`);
 
 --
--- Indexes for table `siswa`
+-- Indeks untuk tabel `nilai_akhir`
+--
+ALTER TABLE `nilai_akhir`
+  ADD PRIMARY KEY (`id_nilai_akhir`);
+
+--
+-- Indeks untuk tabel `siswa`
 --
 ALTER TABLE `siswa`
   ADD PRIMARY KEY (`id_siswa`);
 
 --
--- Indexes for table `users`
+-- Indeks untuk tabel `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `username` (`username`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT for table `guru`
+-- AUTO_INCREMENT untuk tabel `guru`
 --
 ALTER TABLE `guru`
   MODIFY `id_guru` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `jurusan`
+-- AUTO_INCREMENT untuk tabel `jurusan`
 --
 ALTER TABLE `jurusan`
   MODIFY `id_jurusan` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT for table `kelas`
+-- AUTO_INCREMENT untuk tabel `kelas`
 --
 ALTER TABLE `kelas`
   MODIFY `id_kelas` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
--- AUTO_INCREMENT for table `mapel`
+-- AUTO_INCREMENT untuk tabel `mapel`
 --
 ALTER TABLE `mapel`
   MODIFY `id_mapel` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
--- AUTO_INCREMENT for table `nilai`
+-- AUTO_INCREMENT untuk tabel `nilai`
 --
 ALTER TABLE `nilai`
-  MODIFY `id_nilai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_nilai` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
--- AUTO_INCREMENT for table `siswa`
+-- AUTO_INCREMENT untuk tabel `nilai_akhir`
+--
+ALTER TABLE `nilai_akhir`
+  MODIFY `id_nilai_akhir` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT untuk tabel `siswa`
 --
 ALTER TABLE `siswa`
-  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_siswa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- Constraints for dumped tables
+-- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
 
 --
--- Constraints for table `kelas`
+-- Ketidakleluasaan untuk tabel `kelas`
 --
 ALTER TABLE `kelas`
   ADD CONSTRAINT `kelas_ibfk_1` FOREIGN KEY (`id_jurusan`) REFERENCES `jurusan` (`id_jurusan`);
 
 --
--- Constraints for table `kelas_mapel`
+-- Ketidakleluasaan untuk tabel `kelas_mapel`
 --
 ALTER TABLE `kelas_mapel`
   ADD CONSTRAINT `kelas_mapel_ibfk_1` FOREIGN KEY (`id_kelas`) REFERENCES `kelas` (`id_kelas`),
